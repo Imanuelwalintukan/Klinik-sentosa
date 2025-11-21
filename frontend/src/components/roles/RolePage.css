@@ -1,0 +1,473 @@
+.role-page {
+  padding: 30px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.role-page h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 2rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #1a2a6c, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.role-page h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.role-page p {
+  color: #7f8c8d;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.role-features {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  margin-bottom: 40px;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.role-features:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.role-features h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  font-size: 1.4rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.role-features h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.role-features ul {
+  padding-left: 25px;
+  margin: 15px 0;
+}
+
+.role-features li {
+  margin-bottom: 12px;
+  color: #34495e;
+  font-size: 1rem;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 20px;
+}
+
+.role-features li::before {
+  content: '•';
+  color: #3498db;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.dashboard-summary {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard-summary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.dashboard-summary h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  font-size: 1.4rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.dashboard-summary h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #f8f9fa, #eef2f7);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eef2f7;
+  transition: transform 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+}
+
+.summary-card h4 {
+  margin: 0 0 12px 0;
+  color: #7f8c8d;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #3498db;
+  margin: 0;
+  background: linear-gradient(to right, #1a2a6c, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.recent-activity {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  margin-top: 40px;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.recent-activity:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.recent-activity h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  font-size: 1.4rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.recent-activity h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.activity-list {
+  margin-top: 20px;
+}
+
+.activity-item {
+  padding: 20px 0;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-item:hover {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.activity-info h4 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.activity-info p {
+  margin: 5px 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.unauthorized {
+  padding: 60px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.unauthorized h2 {
+  color: #e74c3c;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.unauthorized p {
+  color: #7f8c8d;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+/* Examination list styling */
+.todays-examinations {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  margin-top: 40px;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.todays-examinations:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.todays-examinations h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  font-size: 1.4rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.todays-examinations h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.examinations-list {
+  margin-top: 20px;
+}
+
+.examination-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  transition: all 0.3s;
+}
+
+.examination-item:hover {
+  background-color: #f8f9fa;
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.examination-info h4 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.examination-info p {
+  margin: 5px 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.examination-status {
+  margin-right: 15px;
+}
+
+.status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status.completed {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+}
+
+.status.pending {
+  background: linear-gradient(135deg, #f39c12, #d35400);
+  color: white;
+}
+
+.status.processing {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.examination-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Prescription list styling */
+.todays-prescriptions {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  margin-top: 40px;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.todays-prescriptions:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.todays-prescriptions h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  font-size: 1.4rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.todays-prescriptions h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.prescriptions-list {
+  margin-top: 20px;
+}
+
+.prescription-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  transition: all 0.3s;
+}
+
+.prescription-item:hover {
+  background-color: #f8f9fa;
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.prescription-info h4 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.prescription-info p {
+  margin: 5px 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.prescription-status {
+  margin-right: 15px;
+}
+
+.prescription-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .role-page {
+    padding: 20px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .role-page h2 {
+    font-size: 1.6rem;
+  }
+
+  .examination-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .examination-status {
+    align-self: flex-start;
+  }
+
+  .examination-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

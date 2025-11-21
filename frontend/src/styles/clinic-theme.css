@@ -1,0 +1,494 @@
+/* clinic-theme.css - Tema klinik mewah */
+:root {
+  /* Warna utama klinik mewah */
+  --clinic-primary: #34495e;
+  --clinic-secondary: #3498db;
+  --clinic-accent: #9b59b6;
+  --clinic-success: #2ecc71;
+  --clinic-warning: #f39c12;
+  --clinic-danger: #e74c3c;
+  --clinic-light: #ecf0f1;
+  --clinic-dark: #2c3e50;
+  
+  /* Gradien mewah */
+  --luxury-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --luxury-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --luxury-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --luxury-gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  
+  /* Efek bayangan mewah */
+  --luxury-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  --luxury-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.2);
+  
+  /* Border-radius mewah */
+  --luxury-radius: 20px;
+  --luxury-radius-sm: 12px;
+  --luxury-radius-lg: 25px;
+}
+
+/* Gaya mewah untuk header */
+.header {
+  background: var(--luxury-gradient-1);
+  color: white;
+  padding: 30px;
+  border-radius: var(--luxury-radius-lg);
+  box-shadow: var(--luxury-shadow);
+  margin-bottom: 30px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  transform: rotate(30deg);
+}
+
+.header h2 {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: 2.2rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Gaya mewah untuk card */
+.card {
+  background: white;
+  border-radius: var(--luxury-radius);
+  box-shadow: var(--luxury-shadow);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  border: none;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--luxury-gradient-2);
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: var(--luxury-shadow-hover);
+}
+
+.card h3 {
+  color: var(--clinic-primary);
+  margin: 0 0 15px 0;
+  font-size: 1.4rem;
+  position: relative;
+  padding-left: 20px;
+}
+
+.card h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 20px;
+  background: var(--luxury-gradient-2);
+  border-radius: 4px;
+}
+
+/* Gaya mewah untuk tombol */
+.btn {
+  border-radius: 50px !important;
+  padding: 12px 28px !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.3s ease;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+  z-index: -1;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Gaya mewah untuk form input */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  border-radius: var(--luxury-radius-sm) !important;
+  border: 2px solid #e0e0e0 !important;
+  padding: 14px 18px !important;
+  transition: all 0.3s ease !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--clinic-secondary) !important;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Gaya mewah untuk tabel */
+.table-container {
+  border-radius: var(--luxury-radius) !important;
+  overflow: hidden !important;
+  box-shadow: var(--luxury-shadow) !important;
+}
+
+.table-container table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.table-container th {
+  background: var(--clinic-primary) !important;
+  color: white !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  font-size: 0.8rem !important;
+  padding: 18px 20px !important;
+}
+
+.table-container td {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.table-container tbody tr:hover {
+  background: linear-gradient(to right, rgba(52, 152, 219, 0.05), transparent) !important;
+  transform: scale(1.01) !important;
+}
+
+/* Efek animasi mewah */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.luxury-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.luxury-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Gaya mewah untuk sidebar */
+.sidebar {
+  background: var(--luxury-gradient-1) !important;
+  background-attachment: fixed !important;
+  backdrop-filter: blur(10px);
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.1;
+}
+
+.nav-menu a {
+  border-radius: 10px !important;
+  margin: 5px 15px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(5px);
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+  transform: translateX(8px) !important;
+}
+
+/* Gaya mewah untuk content wrapper */
+.content-wrapper {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="rgba(52, 152, 219, 0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+  opacity: 0.1;
+  z-index: -1;
+}
+
+/* Gaya mewah untuk login form */
+.login-form {
+  border-radius: var(--luxury-radius-lg) !important;
+  box-shadow: var(--luxury-shadow-hover) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,247,250,0.95) 100%) !important;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-form::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0) 70%);
+  transform: rotate(30deg);
+  z-index: -1;
+}
+
+/* Gaya mewah untuk role card */
+.role-card {
+  border-radius: var(--luxury-radius-lg) !important;
+  box-shadow: var(--luxury-shadow) !important;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0) !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--luxury-gradient-4);
+}
+
+.role-card:hover {
+  transform: translateY(-15px) scale(1.03) !important;
+  box-shadow: var(--luxury-shadow-hover) !important;
+}
+
+/* Gaya mewah untuk status badge */
+.status-badge {
+  border-radius: 50px !important;
+  padding: 6px 16px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  font-size: 0.7rem !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Gaya mewah untuk search box */
+.search-box input {
+  border-radius: 50px !important;
+  padding: 14px 20px 14px 50px !important;
+  border: 2px solid #e0e0e0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.search-box input:focus {
+  border-color: var(--clinic-secondary) !important;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Gaya mewah untuk loading */
+.loading {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: var(--luxury-radius-lg);
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+  animation: loading-shine 2s infinite;
+}
+
+@keyframes loading-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Gaya mewah untuk error */
+.error {
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%) !important;
+  border-left: 6px solid var(--clinic-danger) !important;
+  border-radius: var(--luxury-radius-sm) !important;
+  padding: 20px !important;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.1) !important;
+}
+
+/* Gaya mewah untuk dashboard stats */
+.stat-card {
+  border-radius: var(--luxury-radius-lg) !important;
+  box-shadow: var(--luxury-shadow) !important;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa) !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--luxury-gradient-3);
+}
+
+.stat-card:hover {
+  transform: translateY(-10px) scale(1.02) !important;
+  box-shadow: var(--luxury-shadow-hover) !important;
+}
+
+/* Gaya mewah untuk detail card */
+.detail-card {
+  border-radius: var(--luxury-radius-lg) !important;
+  box-shadow: var(--luxury-shadow) !important;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa) !important;
+  position: relative;
+  overflow: hidden;
+  padding: 40px !important;
+}
+
+/* Gaya mewah untuk role menu item */
+.menu-item {
+  border-radius: var(--luxury-radius-lg) !important;
+  box-shadow: var(--luxury-shadow) !important;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa) !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--luxury-gradient-4);
+}
+
+.menu-item:hover {
+  transform: translateY(-10px) scale(1.02) !important;
+  box-shadow: var(--luxury-shadow-hover) !important;
+}
+
+/* Efek mewah tambahan */
+.luxury-glow {
+  position: relative;
+}
+
+.luxury-glow::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: var(--luxury-gradient-2);
+  border-radius: 25px;
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.luxury-glow:hover::after {
+  opacity: 1;
+}
+
+/* Gaya mewah untuk komponen appointment scheduler */
+.appointment-form {
+  border-radius: var(--luxury-radius-lg) !important;
+  box-shadow: var(--luxury-shadow-hover) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,247,250,0.95) 100%) !important;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.appointment-form::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0) 70%);
+  transform: rotate(30deg);
+  z-index: -1;
+}
+
+/* Gaya mewah untuk chart section */
+.chart-section {
+  border-radius: var(--luxury-radius-lg) !important;
+  box-shadow: var(--luxury-shadow) !important;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--luxury-gradient-1);
+}

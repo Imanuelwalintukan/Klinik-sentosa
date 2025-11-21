@@ -1,0 +1,140 @@
+.examination-detail {
+  padding: 20px;
+}
+
+.examination-detail.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+
+.examination-detail .loading-spinner {
+  font-size: 1.2rem;
+  color: #3498db;
+}
+
+.examination-detail.error {
+  text-align: center;
+  padding: 60px 40px;
+}
+
+.examination-detail.error h2 {
+  color: #e74c3c;
+  margin-bottom: 20px;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.detail-header h2 {
+  margin: 0;
+  margin-left: 15px;
+  color: #2c3e50;
+  font-size: 1.8rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #1a2a6c, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.detail-header h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.detail-content {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  border: 1px solid #f0f0f0;
+}
+
+.patient-info,
+.examination-info,
+.vital-info,
+.additional-info {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.patient-info h3,
+.examination-info h3,
+.vital-info h3,
+.additional-info h3 {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.patient-info h3::after,
+.examination-info h3::after,
+.vital-info h3::after,
+.additional-info h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  margin-bottom: 15px;
+}
+
+.info-item label {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+}
+
+.info-item span {
+  display: block;
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+  color: #34495e;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .detail-header .btn {
+    align-self: flex-start;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}

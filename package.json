@@ -1,0 +1,30 @@
+{
+  "name": "klinik-sentosa",
+  "version": "1.0.0",
+  "description": "Aplikasi manajemen klinik sentosa",
+  "main": "backend/app.js",
+  "scripts": {
+    "start": "node backend/app.js",
+    "dev": "nodemon backend/app.js",
+    "dev:client": "cd frontend && npm run dev",
+    "build:client": "cd frontend && npm run build",
+    "seed": "node backend/seeding.js"
+  },
+  "keywords": [
+    "clinic",
+    "management",
+    "react",
+    "nodejs"
+  ],
+  "author": "Klinik Sentosa",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

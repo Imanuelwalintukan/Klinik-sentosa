@@ -1,0 +1,262 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a2a6c 0%, #2c3e50 50%, #3498db 100%);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  z-index: 0;
+}
+
+.login-form {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #1a2a6c, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.login-form h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  margin: 10px auto;
+  border-radius: 2px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.form-group label::after {
+  content: '*';
+  color: #e74c3c;
+  margin-left: 3px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  transform: translateY(-2px);
+}
+
+.error-message {
+  background: linear-gradient(to right, #e74c3c, #c0392b);
+  color: white;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-left: 4px solid #ffffff;
+}
+
+.success-message {
+  background: linear-gradient(to right, #2ecc71, #27ae60);
+  color: white;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-left: 4px solid #ffffff;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0 3px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3498db, #1a2a6c);
+  color: white;
+  width: 100%;
+  margin-top: 10px;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1a2a6c, #3498db);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f39c12, #d35400);
+  color: white;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #d35400, #f39c12);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.login-hints {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.login-hints h3 {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.login-hints ul {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.login-hints li {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.back-to-role-selection {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.back-to-role-selection a {
+  color: #3498db;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  position: relative;
+}
+
+.back-to-role-selection a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #3498db;
+  transition: width 0.3s;
+}
+
+.back-to-role-selection a:hover {
+  text-decoration: none;
+}
+
+.back-to-role-selection a:hover::after {
+  width: 100%;
+}
+
+.klinik-icon {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 3rem;
+}
+
+.klinik-icon i {
+  background: linear-gradient(135deg, #3498db, #1a2a6c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

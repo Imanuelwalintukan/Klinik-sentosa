@@ -1,0 +1,135 @@
+// reportsController.js
+const { Pool } = require('pg');
+require('dotenv').config();
+
+const pool = new Pool({
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'klinik_sentosa',
+  password: process.env.DB_PASS || 'postgres',
+  port: process.env.DB_PORT || 5432,
+});
+
+// Laporan ringkasan umum
+const getSummaryReport = async (req, res) => {
+  try {
+    // Ambil jumlah total dari setiap entitas
+    const [totalPatients, totalDoctors, totalExaminations, totalMedications] = await Promise.all([
+      pool.query('SELECT COUNT(*) as count FROM pasien'),
+      pool.query('SELECT COUNT(*) as count FROM dokter'),
+      pool.query('SELECT COUNT(*) as count FROM pemeriksaan'),
+      pool.query('SELECT COUNT(*) as count FROM obat')
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        totalPatients: parseInt(totalPatients.rows[0].count),
+        totalDoctors: parseInt(totalDoctors.rows[0].count),
+        totalExaminations: parseInt(totalExaminations.rows[0].count),
+        totalMedications: parseInt(totalMedications.rows[0].count),
+        // Data bulan depan bisa ditambahkan di sini
+        monthlyData: []
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Laporan bulanan
+const getMonthlyReport = async (req, res) => {
+  try {
+    // Ambil data pemeriksaan per bulan
+    const result = await pool.query(`
+      SELECT 
+        EXTRACT(YEAR FROM tanggal_pemeriksaan) as year,
+        EXTRACT(MONTH FROM tanggal_pemeriksaan) as month,
+        COUNT(*) as examination_count
+      FROM pemeriksaan
+      GROUP BY EXTRACT(YEAR FROM tanggal_pemeriksaan), EXTRACT(MONTH FROM tanggal_pemeriksaan)
+      ORDER BY year DESC, month DESC
+    `);
+
+    // Format data
+    const monthlyData = result.rows.map(row => ({
+      month: `${row.year}-${String(row.month).padStart(2, '0')}`,
+      examinationCount: parseInt(row.examination_count)
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        monthlyData
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Laporan stok obat
+const getMedicationStockReport = async (req, res) => {
+  try {
+    // Ambil semua data obat
+    const result = await pool.query(`
+      SELECT id, nama_obat, stok, harga
+      FROM obat
+      ORDER BY nama_obat
+    `);
+
+    res.json({
+      success: true,
+      data: {
+        stockData: result.rows
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Laporan riwayat pemeriksaan pasien
+const getPatientHistoryReport = async (req, res) => {
+  try {
+    // Ambil data pasien dengan jumlah pemeriksaan
+    const result = await pool.query(`
+      SELECT 
+        p.id as id_pasien,
+        p.nama as nama_pasien,
+        COUNT(pe.id) as examination_count
+      FROM pasien p
+      LEFT JOIN pemeriksaan pe ON p.id = pe.id_pasien
+      GROUP BY p.id, p.nama
+      ORDER BY examination_count DESC
+    `);
+
+    res.json({
+      success: true,
+      data: {
+        patientHistory: result.rows
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+module.exports = {
+  getSummaryReport,
+  getMonthlyReport,
+  getMedicationStockReport,
+  getPatientHistoryReport
+};
