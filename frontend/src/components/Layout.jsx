@@ -20,19 +20,59 @@ const Layout = ({ children }) => {
   // Menentukan item menu mana yang tersedia berdasarkan peran pengguna
   const getMenuItems = () => {
     if (!currentUser) return [];
+    const { role } = currentUser;
 
-    const items = [
-      { path: '/', label: 'Dashboard', icon: 'icon-dashboard', roles: ['admin', 'apoteker', 'dokter', 'pasien'] },
-      { path: '/patients', label: 'Pasien', icon: 'icon-patients', roles: ['admin', 'dokter'] },
-      { path: '/doctors', label: 'Dokter', icon: 'icon-doctors', roles: ['admin'] },
-      { path: '/examinations', label: 'Pemeriksaan', icon: 'icon-examinations', roles: ['admin', 'dokter'] },
-      { path: '/medications', label: 'Obat', icon: 'icon-medications', roles: ['admin', 'apoteker'] },
-      { path: '/prescriptions', label: 'Resep', icon: 'icon-prescriptions', roles: ['admin', 'dokter', 'apoteker'] },
-      { path: '/reports', label: 'Laporan', icon: 'icon-reports', roles: ['admin'] },
+    let menu = [
+      { path: '/', label: 'Dashboard', icon: 'icon-dashboard' },
     ];
 
-    // Filter berdasarkan peran pengguna
-    return items.filter(item => item.roles.includes(currentUser.role));
+    // Menu untuk Pasien
+    if (role === 'pasien') {
+      menu.push(
+        { path: `/emr/pasien/${currentUser.id}`, label: 'Rekam Medis Saya', icon: 'icon-emr' },
+        { path: `/prescriptions/${currentUser.id}`, label: 'Riwayat Resep', icon: 'icon-prescriptions' }
+      );
+    }
+
+    // Menu untuk Perawat
+    if (role === 'perawat') {
+      menu.push(
+        { path: '/patient-registration', label: 'Pendaftaran Pasien', icon: 'icon-patients' },
+        { path: '/nurses/vital-signs-check', label: 'Pemeriksaan Awal', icon: 'icon-nurses' },
+        { path: '/nurses/vital-signs-checks', label: 'Riwayat P. Awal', icon: 'icon-history' }
+      );
+    }
+    
+    // Menu untuk Dokter
+    if (role === 'dokter') {
+      menu.push(
+        { path: '/patients', label: 'Daftar Pasien', icon: 'icon-patients' },
+        { path: '/examinations', label: 'Pemeriksaan', icon: 'icon-examinations' },
+        { path: '/prescriptions', label: 'Resep', icon: 'icon-prescriptions' }
+      );
+    }
+
+    // Menu untuk Apoteker
+    if (role === 'apoteker') {
+      menu.push(
+        { path: '/prescriptions/pending', label: 'Antrian Resep', icon: 'icon-prescriptions' },
+        { path: '/medications', label: 'Manajemen Obat', icon: 'icon-medications' },
+        { path: '/reports/medicine-usage', label: 'Laporan Obat', icon: 'icon-reports' }
+      );
+    }
+
+    // Menu untuk Admin
+    if (role === 'admin') {
+      menu.push(
+        { path: '/patients', label: 'Manajemen Pasien', icon: 'icon-patients' },
+        { path: '/doctors', label: 'Manajemen Dokter', icon: 'icon-doctors' },
+        { path: '/nurses', label: 'Manajemen Perawat', icon: 'icon-nurses' },
+        { path: '/medications', label: 'Manajemen Obat', icon: 'icon-medications' },
+        { path: '/reports', label: 'Laporan', icon: 'icon-reports' }
+      );
+    }
+
+    return menu;
   };
 
   const menuItems = getMenuItems();
@@ -76,6 +116,11 @@ const Layout = ({ children }) => {
           <div className="header-right">
             <h1>Selamat Datang di Klinik Sentosa</h1>
             <div className="user-actions">
+              {!currentUser && (
+                <Link to="/register" className="btn btn-primary register-link">
+                  Daftar Pasien Baru
+                </Link>
+              )}
               <span className="user-greeting">Halo, {currentUser?.name}</span>
               <Logout />
             </div>

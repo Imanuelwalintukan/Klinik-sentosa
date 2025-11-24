@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 const MedicationList = () => {
   const [medications, setMedications] = useState([]);
@@ -13,7 +13,7 @@ const MedicationList = () => {
 
   const fetchMedications = async () => {
     try {
-      const response = await axios.get('/api/obat');
+      const response = await axios.get('/obat');
       setMedications(Array.isArray(response.data.data) ? response.data.data : []);
       setLoading(false);
     } catch (err) {
@@ -25,7 +25,7 @@ const MedicationList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus obat ini?')) {
       try {
-        await axios.delete(`/api/obat/${id}`);
+        await axios.delete(`/obat/${id}`);
         fetchMedications(); // Refresh data
       } catch (err) {
         setError('Gagal menghapus obat');

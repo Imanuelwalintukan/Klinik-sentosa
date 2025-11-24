@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
+import { useAuth } from '../auth/AuthProvider'; // Import useAuth
 
 const DoctorList = () => {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [specializationFilter, setSpecializationFilter] = useState('');
+  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
   useEffect(() => {
-    fetchDoctors();
-  }, []);
+    if (isAuthenticated) { // Hanya fetch jika sudah terautentikasi
+      fetchDoctors();
+    } else {
+      setLoading(false); // Jika tidak terautentikasi, hentikan loading
+    }
+  }, [isAuthenticated]);
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('/api/dokter');
+      const response = await axios.get('/dokter');
       setDoctors(response.data.data || []);
       setLoading(false);
     } catch (err) {
@@ -25,7 +32,7 @@ const DoctorList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus dokter ini?')) {
       try {
-        await axios.delete(`/api/dokter/${id}`);
+        await axios.delete(`/dokter/${id}`);
         fetchDoctors(); // Refresh data
       } catch (err) {
         setError('Gagal menghapus dokter');
@@ -33,9 +40,13 @@ const DoctorList = () => {
     }
   };
 
+  // Dapatkan spesialisasi unik untuk dropdown filter
+  const uniqueSpecializations = [...new Set(doctors.map(doctor => doctor.spesialis))];
+
   const filteredDoctors = Array.isArray(doctors) ? doctors.filter(doctor =>
-    doctor.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doctor.spesialis.toLowerCase().includes(searchTerm.toLowerCase())
+    (doctor.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doctor.spesialis.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (specializationFilter === '' || doctor.spesialis === specializationFilter)
   ) : [];
 
   if (loading) return <div className="loading">Memuat data dokter...</div>;
@@ -50,14 +61,29 @@ const DoctorList = () => {
         </button>
       </div>
 
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Cari dokter berdasarkan nama atau spesialis..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="form-control"
-        />
+      <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', alignItems: 'end' }}>
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Cari dokter berdasarkan nama atau spesialis..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="form-control"
+          />
+        </div>
+
+        <div className="filter-select" style={{ flexShrink: 0, width: '250px' }}>
+          <select
+            value={specializationFilter}
+            onChange={(e) => setSpecializationFilter(e.target.value)}
+            className="form-control"
+          >
+            <option value="">Semua Spesialisasi</option>
+            {uniqueSpecializations.map((spec, index) => (
+              <option key={index} value={spec}>{spec}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="table-responsive">

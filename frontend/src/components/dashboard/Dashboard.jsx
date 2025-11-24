@@ -1,6 +1,6 @@
 // Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
@@ -22,15 +22,15 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       // Ambil data ringkasan
-      const summaryResponse = await axios.get('/api/reports/summary');
+      const summaryResponse = await axios.get('/reports/summary');
       const summaryData = summaryResponse.data.data;
 
       // Ambil data pemeriksaan terbaru
-      const examinationsResponse = await axios.get('/api/pemeriksaan');
+      const examinationsResponse = await axios.get('/pemeriksaan');
       const recentExaminations = examinationsResponse.data.data.slice(0, 5);
 
       // Ambil data stok obat rendah
-      const medicationsResponse = await axios.get('/api/reports/medication-stock');
+      const medicationsResponse = await axios.get('/reports/medication-stock');
       const lowStockMedications = medicationsResponse.data.data.stockData
         .filter(med => med.stok < 10)
         .slice(0, 5);

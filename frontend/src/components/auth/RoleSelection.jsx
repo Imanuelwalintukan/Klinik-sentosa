@@ -8,6 +8,7 @@ const RoleSelection = () => {
   const roles = [
     { id: 'admin', name: 'Administrator', description: 'Mengelola seluruh sistem klinik' },
     { id: 'dokter', name: 'Dokter', description: 'Melakukan pemeriksaan dan membuat resep' },
+    { id: 'perawat', name: 'Perawat', description: 'Melakukan pemeriksaan awal sebelum diperiksa dokter' },
     { id: 'apoteker', name: 'Apoteker', description: 'Mengelola obat dan resep' },
     { id: 'pasien', name: 'Pasien', description: 'Melihat riwayat pemeriksaan' }
   ];

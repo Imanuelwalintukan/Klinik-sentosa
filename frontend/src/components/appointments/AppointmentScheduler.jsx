@@ -1,6 +1,6 @@
 // AppointmentScheduler.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 const AppointmentScheduler = () => {
   const [appointments, setAppointments] = useState([]);
@@ -57,7 +57,7 @@ const AppointmentScheduler = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('/api/dokter');
+      const response = await axios.get('/dokter');
       setDoctors(response.data.data);
     } catch (err) {
       console.error('Gagal mengambil data dokter');
@@ -66,7 +66,7 @@ const AppointmentScheduler = () => {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get('/api/pasien');
+      const response = await axios.get('/pasien');
       setPatients(response.data.data);
     } catch (err) {
       console.error('Gagal mengambil data pasien');

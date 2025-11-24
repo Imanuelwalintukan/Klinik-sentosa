@@ -1,7 +1,7 @@
-// Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
+import axios from '../../axiosConfig'; // Import axios yang sudah dikonfigurasi
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -28,45 +28,36 @@ const Login = () => {
     setError('');
 
     try {
-      // Simulasi login - dalam implementasi nyata, ini akan memanggil API
-      // Untuk demo, kita akan menggunakan login sederhana
-      if (credentials.username === 'admin' && credentials.password === 'admin123') {
-        login({
-          id: 1,
-          username: 'admin',
-          name: 'Administrator',
-          role: 'admin'
-        });
-        navigate('/admin');
-      } else if (credentials.username === 'dokter' && credentials.password === 'dokter123') {
-        login({
-          id: 2,
-          username: 'dokter',
-          name: 'Dr. Andi',
-          role: 'dokter'
-        });
-        navigate('/doctor');
-      } else if (credentials.username === 'apoteker' && credentials.password === 'apoteker123') {
-        login({
-          id: 3,
-          username: 'apoteker',
-          name: 'Susi Apoteker',
-          role: 'apoteker'
-        });
-        navigate('/pharmacist');
-      } else if (credentials.username === 'pasien' && credentials.password === 'pasien123') {
-        login({
-          id: 4,
-          username: 'pasien',
-          name: 'Budi Santoso',
-          role: 'pasien'
-        });
-        navigate('/patient');
+      // Panggil API login yang sesungguhnya
+      const response = await axios.post('/auth/login', credentials);
+      
+      if (response.data.success) {
+        login(response.data.data); // Data sudah termasuk token
+        
+        // Redirect berdasarkan role yang diterima dari backend
+        switch (response.data.data.role) {
+          case 'admin':
+            navigate('/admin');
+            break;
+          case 'dokter':
+            navigate('/doctor');
+            break;
+          case 'apoteker':
+            navigate('/pharmacist');
+            break;
+          case 'perawat':
+            navigate('/nurse');
+            break;
+          default:
+            setError('Role tidak dikenali. Silakan hubungi administrator.');
+            break;
+        }
       } else {
-        setError('Username atau password salah');
+        setError(response.data.message || 'Login gagal.');
       }
     } catch (err) {
-      setError('Terjadi kesalahan saat login');
+      console.error("Login API Error:", err);
+      setError(err.response?.data?.message || 'Terjadi kesalahan saat login. Periksa username dan password Anda.');
     } finally {
       setLoading(false);
     }
@@ -75,10 +66,10 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-form">
-        <h2>Login</h2>
-        
+        <h2>Login Staff</h2>
+
         {error && <div className="alert alert-danger">{error}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username:</label>
@@ -92,7 +83,7 @@ const Login = () => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="password">Password:</label>
             <input
@@ -105,14 +96,15 @@ const Login = () => {
               required
             />
           </div>
-          
+
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? 'Masuk...' : 'Login'}
           </button>
         </form>
-        
+
         <div className="login-actions">
           <a href="/login/roles">Login sebagai role lain</a>
+          <a href="/patient-login">Login sebagai Pasien</a>
         </div>
       </div>
     </div>

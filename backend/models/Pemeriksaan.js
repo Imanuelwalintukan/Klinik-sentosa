@@ -21,7 +21,7 @@ const getPemeriksaanById = async (id) => {
     LEFT JOIN pasien pas ON p.id_pasien = pas.id
     LEFT JOIN dokter d ON p.id_dokter = d.id
     WHERE p.id = $1
-  `);
+  `, [id]);
   return result.rows[0];
 };
 

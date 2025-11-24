@@ -30,12 +30,14 @@ const AdminPage = () => {
           </div>
           
           <div className="menu-item">
-            <h4>Manajemen Pemeriksaan</h4>
-            <p>Kelola data pemeriksaan</p>
+            <h4>Manajemen Perawat</h4>
+            <p>Kelola data perawat</p>
             <div className="menu-actions">
-              <a href="/examinations" className="btn btn-primary">Lihat Daftar</a>
+              <a href="/nurses" className="btn btn-primary">Lihat Daftar</a>
             </div>
           </div>
+          
+
           
           <div className="menu-item">
             <h4>Manajemen Obat</h4>
@@ -45,13 +47,7 @@ const AdminPage = () => {
             </div>
           </div>
           
-          <div className="menu-item">
-            <h4>Manajemen Resep</h4>
-            <p>Kelola data resep</p>
-            <div className="menu-actions">
-              <a href="/prescriptions" className="btn btn-primary">Lihat Daftar</a>
-            </div>
-          </div>
+
           
           <div className="menu-item">
             <h4>Laporan</h4>

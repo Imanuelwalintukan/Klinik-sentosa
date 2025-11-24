@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthProvider'; // Import useAuth
 
 const PrescriptionDetail = () => {
   const { id } = useParams();
@@ -9,14 +10,19 @@ const PrescriptionDetail = () => {
   const [prescription, setPrescription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
   useEffect(() => {
-    fetchPrescription();
-  }, [id]);
+    if (isAuthenticated) { // Hanya fetch jika sudah terautentikasi
+      fetchPrescription();
+    } else {
+      setLoading(false); // Jika tidak terautentikasi, hentikan loading
+    }
+  }, [id, isAuthenticated]);
 
   const fetchPrescription = async () => {
     try {
-      const response = await axios.get(`/api/resep/${id}`);
+      const response = await axios.get(`/resep/${id}`);
       setPrescription(response.data.data);
       setLoading(false);
     } catch (err) {
@@ -28,7 +34,7 @@ const PrescriptionDetail = () => {
   const handleDelete = async () => {
     if (window.confirm('Apakah Anda yakin ingin menghapus resep ini?')) {
       try {
-        await axios.delete(`/api/resep/${id}`);
+        await axios.delete(`/resep/${id}`);
         alert('Resep berhasil dihapus');
         navigate('/prescriptions'); // Kembali ke daftar resep
       } catch (err) {

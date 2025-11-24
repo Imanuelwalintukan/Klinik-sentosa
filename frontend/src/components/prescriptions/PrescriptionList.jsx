@@ -1,106 +1,114 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from '../../axiosConfig';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthProvider'; // Import useAuth
+import './Prescription.css'; // Asumsi file styling yang sama
 
 const PrescriptionList = () => {
-  const [prescriptions, setPrescriptions] = useState([]);
+  const [examinations, setExaminations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('Menunggu'); // 'Menunggu' or 'Selesai'
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
   useEffect(() => {
-    fetchPrescriptions();
-  }, []);
-
-  const fetchPrescriptions = async () => {
-    try {
-      const response = await axios.get('/api/resep');
-      setPrescriptions(response.data.data || []);
-      setLoading(false);
-    } catch (err) {
-      setError('Gagal mengambil data resep');
-      setLoading(false);
+    if (isAuthenticated) { // Hanya fetch jika sudah terautentikasi
+      setLoading(true);
+      axios.get('/pemeriksaan')
+        .then(response => {
+          setExaminations(response.data.data);
+        })
+        .catch(err => {
+          console.error("Fetch error:", err);
+          setError('Gagal mengambil data resep dari server.');
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false); // Jika tidak terautentikasi, hentikan loading
     }
+  }, [isAuthenticated]);
+
+  const filteredExaminations = useMemo(() => {
+    return examinations.filter(ex => ex.status_resep === activeTab);
+  }, [examinations, activeTab]);
+
+  const handleProcess = (pemeriksaanId) => {
+    navigate(`/dispense/${pemeriksaanId}`);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus resep ini?')) {
-      try {
-        await axios.delete(`/api/resep/${id}`);
-        fetchPrescriptions(); // Refresh data
-      } catch (err) {
-        setError('Gagal menghapus resep');
-      }
-    }
-  };
+  if (loading) {
+    return <div className="prescription-list-container"><h2>Memuat antrian resep...</h2></div>;
+  }
 
-  const filteredPrescriptions = Array.isArray(prescriptions) ? prescriptions.filter(prescription =>
-    prescription.nama_pasien?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    prescription.nama_obat?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) : [];
-
-  if (loading) return <div className="loading">Memuat data resep...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (error) {
+    return <div className="prescription-list-container alert alert-danger">Error: {error}</div>;
+  }
 
   return (
-    <div className="prescription-list">
-      <div className="header">
-        <h2>Daftar Resep</h2>
-        <button className="btn btn-primary" onClick={() => window.location.href='/prescriptions/new'}>
-          Tambah Resep
-        </button>
+    <div className="prescription-list-container">
+      <div className="list-header">
+        <h2>Antrian Resep</h2>
+        <div className="tabs">
+          <button 
+            className={`tab ${activeTab === 'Menunggu' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('Menunggu')}
+          >
+            Menunggu
+          </button>
+          <button 
+            className={`tab ${activeTab === 'Selesai' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Selesai')}
+          >
+            Selesai
+          </button>
+        </div>
       </div>
 
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Cari resep berdasarkan nama pasien atau nama obat..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="form-control"
-        />
-      </div>
-
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nama Pasien</th>
-              <th>Nama Obat</th>
-              <th>Tanggal Pemeriksaan</th>
-              <th>Jumlah</th>
-              <th>Aturan Pakai</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPrescriptions.map((prescription) => (
-              <tr key={prescription.id}>
-                <td>{prescription.id}</td>
-                <td>{prescription.nama_pasien}</td>
-                <td>{prescription.nama_obat}</td>
-                <td>{prescription.tanggal_pemeriksaan ? new Date(prescription.tanggal_pemeriksaan).toLocaleDateString() : '-'}</td>
-                <td>{prescription.jumlah}</td>
-                <td>{prescription.aturan_pakai}</td>
+      <table className="table table-striped table-hover">
+        <thead className="thead-dark">
+          <tr>
+            <th>Tanggal</th>
+            <th>Nama Pasien</th>
+            <th>Nama Dokter</th>
+            <th>Status Resep</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredExaminations.length > 0 ? (
+            filteredExaminations.map((ex) => (
+              <tr key={ex.id}>
+                <td>{new Date(ex.tanggal_pemeriksaan).toLocaleString('id-ID')}</td>
+                <td>{ex.nama_pasien}</td>
+                <td>{ex.nama_dokter}</td>
                 <td>
-                  <button 
-                    className="btn btn-sm btn-info mr-2" 
-                    onClick={() => window.location.href=`/prescriptions/${prescription.id}/edit`}
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn btn-sm btn-danger" 
-                    onClick={() => handleDelete(prescription.id)}
-                  >
-                    Hapus
-                  </button>
+                  <span className={`status-badge ${ex.status_resep === 'Selesai' ? 'status-diperiksa' : 'status-belum'}`}>
+                    {ex.status_resep}
+                  </span>
+                </td>
+                <td>
+                  {activeTab === 'Menunggu' ? (
+                    <button onClick={() => handleProcess(ex.id)} className="btn btn-sm btn-success">
+                      Proses Resep
+                    </button>
+                  ) : (
+                    <button onClick={() => navigate(`/examinations/${ex.id}`)} className="btn btn-sm btn-info">
+                      Lihat Detail
+                    </button>
+                  )}
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                Tidak ada resep dalam status '{activeTab}'.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

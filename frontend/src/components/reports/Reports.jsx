@@ -1,12 +1,14 @@
 // Reports.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
+import { useAuth } from '../auth/AuthProvider'; // Import useAuth
 
 const Reports = () => {
   const [reportType, setReportType] = useState('summary');
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
   // Fungsi untuk mengambil data laporan berdasarkan jenis laporan
   const fetchReportData = async () => {
@@ -19,19 +21,19 @@ const Reports = () => {
       switch(reportType) {
         case 'summary':
           // Laporan ringkasan: jumlah pasien, dokter, pemeriksaan, dll
-          response = await axios.get('/api/reports/summary');
+          response = await axios.get('/reports/summary');
           break;
         case 'monthly':
           // Laporan bulanan: pemeriksaan per bulan
-          response = await axios.get('/api/reports/monthly');
+          response = await axios.get('/reports/monthly');
           break;
         case 'patient-history':
           // Riwayat pemeriksaan pasien
-          response = await axios.get('/api/reports/patient-history');
+          response = await axios.get('/reports/patient-history');
           break;
         case 'medication-stock':
           // Laporan stok obat
-          response = await axios.get('/api/reports/medication-stock');
+          response = await axios.get('/reports/medication-stock');
           break;
         default:
           throw new Error('Jenis laporan tidak valid');
@@ -46,8 +48,10 @@ const Reports = () => {
   };
 
   useEffect(() => {
-    fetchReportData();
-  }, [reportType]);
+    if (isAuthenticated) { // Hanya fetch jika sudah terautentikasi
+      fetchReportData();
+    }
+  }, [reportType, isAuthenticated]);
 
   const reportTypes = [
     { id: 'summary', name: 'Ringkasan Umum' },

@@ -29,6 +29,15 @@ const DoctorPage = () => {
               <a href="/examinations/new" className="btn btn-secondary">Tambah Pemeriksaan</a>
             </div>
           </div>
+
+          <div className="menu-item">
+            <h4>Laporan Klinik</h4>
+            <p>Lihat dan cetak laporan statistik klinik</p>
+            <div className="menu-actions">
+              <a href="/reports" className="btn btn-primary">Lihat Laporan</a>
+
+            </div>
+          </div>
           
           <div className="menu-item">
             <h4>Manajemen Resep</h4>

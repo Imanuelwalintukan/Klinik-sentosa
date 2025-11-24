@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
+import { useAuth } from '../auth/AuthProvider'; // Import useAuth
 
 const ExaminationList = () => {
   const [examinations, setExaminations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
   useEffect(() => {
-    fetchExaminations();
-  }, []);
+    if (isAuthenticated) { // Hanya fetch jika sudah terautentikasi
+      fetchExaminations();
+    } else {
+      setLoading(false); // Jika tidak terautentikasi, hentikan loading
+    }
+  }, [isAuthenticated]);
 
   const fetchExaminations = async () => {
     try {
-      const response = await axios.get('/api/pemeriksaan');
+      const response = await axios.get('/pemeriksaan');
       setExaminations(response.data.data || []);
       setLoading(false);
     } catch (err) {
@@ -25,7 +31,7 @@ const ExaminationList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus pemeriksaan ini?')) {
       try {
-        await axios.delete(`/api/pemeriksaan/${id}`);
+        await axios.delete(`/pemeriksaan/${id}`);
         fetchExaminations(); // Refresh data
       } catch (err) {
         setError('Gagal menghapus pemeriksaan');

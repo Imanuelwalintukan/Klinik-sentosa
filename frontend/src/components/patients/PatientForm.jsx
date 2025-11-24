@@ -1,44 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import axios from '../../axiosConfig';
+import { useAuth } from '../auth/AuthProvider'; // Import useAuth
 
-const PatientForm = () => {
-  const { id } = useParams(); // id akan kosong jika menambahkan pasien baru
-  const navigate = useNavigate();
-  
+// Komponen form ini bisa untuk 'create' dan 'edit'
+const PatientForm = ({ patientId, onSuccess }) => {
   const [formData, setFormData] = useState({
     nama: '',
-    tanggal_lahir: '',
-    jenis_kelamin: '',
+    nomor_telepon: '',
     alamat: '',
-    nomor_telepon: ''
+    tanggal_lahir: '',
+    jenis_kelamin: 'Laki-laki',
+    nomor_bpjs: '',
   });
-  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isEditMode = !!patientId;
+  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
-  // Jika id ada, ambil data pasien yang akan diedit
   useEffect(() => {
-    if (id) {
-      fetchPatient();
+    if (isEditMode && isAuthenticated) { // Hanya fetch jika edit mode dan sudah terautentikasi
+      setLoading(true);
+      axios.get(`/pasien/${patientId}`)
+        .then(response => {
+          if (response.data.success) {
+            // Format tanggal YYYY-MM-DD untuk input type="date"
+            const data = { ...response.data.data, tanggal_lahir: response.data.data.tanggal_lahir.split('T')[0] };
+            setFormData(data);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          setError('Gagal memuat data pasien.');
+        })
+        .finally(() => setLoading(false));
+    } else if (isEditMode && !isAuthenticated) {
+        setLoading(false); // Jika edit mode tapi tidak terautentikasi, hentikan loading
     }
-  }, [id]);
-
-  const fetchPatient = async () => {
-    try {
-      const response = await axios.get(`/api/pasien/${id}`);
-      setFormData(response.data.data);
-    } catch (err) {
-      setError('Gagal mengambil data pasien');
-    }
-  };
+  }, [patientId, isEditMode, isAuthenticated]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -47,103 +49,75 @@ const PatientForm = () => {
     setError(null);
 
     try {
-      if (id) {
-        // Update pasien
-        await axios.put(`/api/pasien/${id}`, formData);
-        alert('Pasien berhasil diperbarui');
+      let response;
+      if (isEditMode) {
+        response = await axios.put(`/pasien/${patientId}`, formData);
       } else {
-        // Tambah pasien baru
-        await axios.post('/api/pasien', formData);
-        alert('Pasien berhasil ditambahkan');
+        response = await axios.post('/pasien', formData);
       }
-      navigate('/patients'); // Kembali ke daftar pasien
+
+      if (response.data.success) {
+        alert(`Data pasien berhasil ${isEditMode ? 'diperbarui' : 'disimpan'}!`);
+        if (onSuccess) {
+          onSuccess(); // Panggil callback untuk menutup form/modal atau refresh
+        }
+      } else {
+        throw new Error(response.data.message || 'Operasi gagal.');
+      }
     } catch (err) {
-      setError('Gagal menyimpan data pasien: ' + (err.response?.data?.message || err.message));
+      console.error(err);
+      const errorMessage = err.response?.data?.message || err.message || 'Terjadi kesalahan server.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+  
+  if (loading && isEditMode) {
+      return <p>Memuat data...</p>;
+  }
 
   return (
-    <div className="patient-form">
-      <h2>{id ? 'Edit Pasien' : 'Tambah Pasien Baru'}</h2>
-      
+    <form onSubmit={handleSubmit} className="patient-form">
       {error && <div className="alert alert-danger">{error}</div>}
       
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="nama">Nama:</label>
-          <input
-            type="text"
-            id="nama"
-            name="nama"
-            value={formData.nama}
-            onChange={handleChange}
-            className="form-control"
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="tanggal_lahir">Tanggal Lahir:</label>
-          <input
-            type="date"
-            id="tanggal_lahir"
-            name="tanggal_lahir"
-            value={formData.tanggal_lahir}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="jenis_kelamin">Jenis Kelamin:</label>
-          <select
-            id="jenis_kelamin"
-            name="jenis_kelamin"
-            value={formData.jenis_kelamin}
-            onChange={handleChange}
-            className="form-control"
-          >
-            <option value="">Pilih jenis kelamin</option>
-            <option value="Laki-laki">Laki-laki</option>
-            <option value="Perempuan">Perempuan</option>
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="alamat">Alamat:</label>
-          <textarea
-            id="alamat"
-            name="alamat"
-            value={formData.alamat}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="nomor_telepon">Nomor Telepon:</label>
-          <input
-            type="text"
-            id="nomor_telepon"
-            name="nomor_telepon"
-            value={formData.nomor_telepon}
-            onChange={handleChange}
-            className="form-control"
-          />
-        </div>
-        
-        <div className="form-actions">
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Menyimpan...' : (id ? 'Update Pasien' : 'Tambah Pasien')}
-          </button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/patients')}>
-            Batal
-          </button>
-        </div>
-      </form>
-    </div>
+      <div className="form-group">
+        <label htmlFor="nama">Nama</label>
+        <input type="text" id="nama" name="nama" value={formData.nama} onChange={handleChange} required />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="nomor_telepon">Nomor Telepon</label>
+        <input type="tel" id="nomor_telepon" name="nomor_telepon" value={formData.nomor_telepon} onChange={handleChange} required />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="alamat">Alamat</label>
+        <textarea id="alamat" name="alamat" value={formData.alamat} onChange={handleChange} required />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="tanggal_lahir">Tanggal Lahir</label>
+        <input type="date" id="tanggal_lahir" name="tanggal_lahir" value={formData.tanggal_lahir} onChange={handleChange} required />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="jenis_kelamin">Jenis Kelamin</label>
+        <select id="jenis_kelamin" name="jenis_kelamin" value={formData.jenis_kelamin} onChange={handleChange} required>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="nomor_bpjs">Nomor BPJS (Opsional)</label>
+        <input type="text" id="nomor_bpjs" name="nomor_bpjs" value={formData.nomor_bpjs || ''} onChange={handleChange} />
+      </div>
+
+      <button type="submit" className="btn btn-primary" disabled={loading}>
+        {loading ? 'Menyimpan...' : (isEditMode ? 'Perbarui Data' : 'Simpan Pasien Baru')}
+      </button>
+    </form>
   );
 };
 

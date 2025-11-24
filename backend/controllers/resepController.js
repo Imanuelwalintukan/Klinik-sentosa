@@ -109,11 +109,50 @@ const deleteResep = async (req, res) => {
     }
 };
 
+const createBulkResep = async (req, res) => {
+    try {
+        const { examinationId, items } = req.body;
+        if (!examinationId || !items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ success: false, message: 'Data resep tidak valid.' });
+        }
+
+        const newReseps = await resepModel.createBulkResep(examinationId, items);
+
+        res.status(201).json({
+            success: true,
+            message: 'Resep bulk berhasil ditambahkan.',
+            data: newReseps
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+const dispenseResep = async (req, res) => {
+    try {
+        const { pemeriksaanId } = req.params;
+        const result = await resepModel.dispense(pemeriksaanId);
+        res.status(200).json(result);
+    } catch (error) {
+        // Log the specific error message from the model
+        console.error(`Dispense error for examination ${req.params.pemeriksaanId}:`, error.message);
+        res.status(400).json({
+            success: false,
+            message: error.message // Send the specific error message to the frontend
+        });
+    }
+};
+
 module.exports = {
     getAllResep,
     getResepById,
     getResepByPemeriksaanId,
     createResep,
     updateResep,
-    deleteResep
+    deleteResep,
+    createBulkResep,
+    dispenseResep
 };

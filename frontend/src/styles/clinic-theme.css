@@ -211,20 +211,9 @@
 
 /* Gaya mewah untuk sidebar */
 .sidebar {
-  background: var(--luxury-gradient-1) !important;
+  background: var(--clinic-primary) !important;
   background-attachment: fixed !important;
   backdrop-filter: blur(10px);
-}
-
-.sidebar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.1;
 }
 
 .nav-menu a {
@@ -243,22 +232,10 @@
 
 /* Gaya mewah untuk content wrapper */
 .content-wrapper {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+  background: #f4f7f9 !important;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-}
-
-.content-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="rgba(52, 152, 219, 0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-  opacity: 0.1;
-  z-index: -1;
 }
 
 /* Gaya mewah untuk login form */

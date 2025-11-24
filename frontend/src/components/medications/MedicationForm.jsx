@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const MedicationForm = () => {
@@ -25,7 +25,7 @@ const MedicationForm = () => {
 
   const fetchMedication = async () => {
     try {
-      const response = await axios.get(`/api/obat/${id}`);
+      const response = await axios.get(`/obat/${id}`);
       setFormData(response.data.data);
     } catch (err) {
       setError('Gagal mengambil data obat');
@@ -50,11 +50,11 @@ const MedicationForm = () => {
     try {
       if (id) {
         // Update medication
-        await axios.put(`/api/obat/${id}`, formData);
+        await axios.put(`/obat/${id}`, formData);
         alert('Obat berhasil diperbarui');
       } else {
         // Add new medication
-        await axios.post('/api/obat', formData);
+        await axios.post('/obat', formData);
         alert('Obat berhasil ditambahkan');
       }
       navigate('/medications'); // Return to medication list

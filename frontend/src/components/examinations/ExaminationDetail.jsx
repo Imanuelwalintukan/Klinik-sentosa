@@ -1,36 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import axios from '../../axiosConfig';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import './ExaminationDetail.css';
 
 const ExaminationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
   const [examination, setExamination] = useState(null);
+  const [prescription, setPrescription] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchExamination();
+    const fetchDetails = async () => {
+      setLoading(true);
+      try {
+        // Ambil data pemeriksaan
+        const examResponse = await axios.get(`/pemeriksaan/${id}`);
+        setExamination(examResponse.data.data);
+
+        // Ambil data resep yang terkait
+        const resepResponse = await axios.get(`/resep/pemeriksaan/${id}`);
+        setPrescription(resepResponse.data.data);
+
+      } catch (err) {
+        setError('Gagal mengambil detail data.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchDetails();
   }, [id]);
 
-  const fetchExamination = async () => {
-    try {
-      const response = await axios.get(`/api/pemeriksaan/${id}`);
-      setExamination(response.data.data);
-      setLoading(false);
-    } catch (err) {
-      setError('Gagal mengambil data pemeriksaan');
-      setLoading(false);
-    }
-  };
-
   const handleDelete = async () => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus pemeriksaan ini?')) {
+    // Note: Deleting an examination should ideally also handle related prescriptions.
+    // This might require a cascaded delete in the database or a more complex backend function.
+    if (window.confirm('Apakah Anda yakin ingin menghapus pemeriksaan ini beserta resepnya?')) {
       try {
-        await axios.delete(`/api/pemeriksaan/${id}`);
+        await axios.delete(`/pemeriksaan/${id}`);
         alert('Pemeriksaan berhasil dihapus');
-        navigate('/examinations'); // Kembali ke daftar pemeriksaan
+        navigate('/examinations');
       } catch (err) {
         setError('Gagal menghapus pemeriksaan');
       }
@@ -46,58 +58,75 @@ const ExaminationDetail = () => {
       <div className="header">
         <h2>Detail Pemeriksaan</h2>
         <div className="actions">
-          <button className="btn btn-info mr-2" onClick={() => navigate(`/examinations/${id}/edit`)}>
-            Edit
-          </button>
-          <button className="btn btn-danger" onClick={handleDelete}>
-            Hapus
-          </button>
+          <Link to={`/prescriptions/new?examinationId=${id}`} className="btn btn-primary">
+            + Tambah Resep
+          </Link>
           <button className="btn btn-secondary" onClick={() => navigate('/examinations')}>
-            Kembali
+            Kembali ke Daftar
           </button>
         </div>
       </div>
 
-      <div className="detail-content">
-        <div className="detail-card">
+      <div className="detail-grid">
+        <div className="detail-card info-card">
           <h3>Informasi Pemeriksaan</h3>
-          
+          {/* ... Detail rows ... */}
           <div className="detail-row">
-            <div className="detail-label">ID Pemeriksaan:</div>
-            <div className="detail-value">{examination.id}</div>
-          </div>
-          
-          <div className="detail-row">
-            <div className="detail-label">Nama Pasien:</div>
+            <div className="detail-label">Pasien:</div>
             <div className="detail-value">{examination.nama_pasien}</div>
           </div>
-          
           <div className="detail-row">
-            <div className="detail-label">Nama Dokter:</div>
+            <div className="detail-label">Dokter:</div>
             <div className="detail-value">{examination.nama_dokter}</div>
           </div>
-          
           <div className="detail-row">
-            <div className="detail-label">Tanggal Pemeriksaan:</div>
+            <div className="detail-label">Tanggal:</div>
             <div className="detail-value">
-              {examination.tanggal_pemeriksaan ? new Date(examination.tanggal_pemeriksaan).toLocaleString() : '-'}
+              {new Date(examination.tanggal_pemeriksaan).toLocaleString('id-ID')}
             </div>
           </div>
-          
-          <div className="detail-row">
-            <div className="detail-label">Keluhan:</div>
-            <div className="detail-value">{examination.keluhan || '-'}</div>
+        </div>
+
+        <div className="detail-card diagnosis-card">
+          <h3>Hasil Pemeriksaan</h3>
+          <div className="detail-group">
+            <h4>Keluhan</h4>
+            <p>{examination.keluhan || '-'}</p>
           </div>
-          
-          <div className="detail-row">
-            <div className="detail-label">Diagnosa:</div>
-            <div className="detail-value">{examination.diagnosa || '-'}</div>
+          <div className="detail-group">
+            <h4>Diagnosa</h4>
+            <p>{examination.diagnosa || '-'}</p>
           </div>
-          
-          <div className="detail-row">
-            <div className="detail-label">Rekomendasi Pengobatan:</div>
-            <div className="detail-value">{examination.rekomendasi_pengobatan || '-'}</div>
+          <div className="detail-group">
+            <h4>Rekomendasi Pengobatan</h4>
+            <p>{examination.rekomendasi_pengobatan || '-'}</p>
           </div>
+        </div>
+
+        <div className="detail-card prescription-card">
+          <h3>Resep Obat</h3>
+          {prescription.length > 0 ? (
+            <table className="prescription-table">
+              <thead>
+                <tr>
+                  <th>Obat</th>
+                  <th>Jumlah</th>
+                  <th>Aturan Pakai</th>
+                </tr>
+              </thead>
+              <tbody>
+                {prescription.map(item => (
+                  <tr key={item.id}>
+                    <td>{item.nama_obat}</td>
+                    <td>{item.jumlah}</td>
+                    <td>{item.aturan_pakai}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>Belum ada resep untuk pemeriksaan ini.</p>
+          )}
         </div>
       </div>
     </div>

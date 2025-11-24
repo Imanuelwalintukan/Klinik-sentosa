@@ -57,9 +57,38 @@ const getPemeriksaanByPasienId = async (req, res) => {
     }
 };
 
+const db = require('../config/database');
+
 const createPemeriksaan = async (req, res) => {
     try {
         const pemeriksaanData = req.body;
+
+        // Validasi bahwa pasien dan dokter benar-benar ada
+        if (!pemeriksaanData.id_pasien || !pemeriksaanData.id_dokter) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID pasien dan ID dokter wajib diisi'
+            });
+        }
+
+        // Cek apakah pasien ada
+        const pasienCheck = await db.query('SELECT id FROM pasien WHERE id = $1', [pemeriksaanData.id_pasien]);
+        if (pasienCheck.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Pasien tidak ditemukan'
+            });
+        }
+
+        // Cek apakah dokter ada
+        const dokterCheck = await db.query('SELECT id FROM dokter WHERE id = $1', [pemeriksaanData.id_dokter]);
+        if (dokterCheck.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Dokter tidak ditemukan'
+            });
+        }
+
         const newPemeriksaan = await pemeriksaanModel.createPemeriksaan(pemeriksaanData);
 
         res.status(201).json({
@@ -78,6 +107,28 @@ const updatePemeriksaan = async (req, res) => {
     try {
         const { id } = req.params;
         const pemeriksaanData = req.body;
+
+        // Validasi bahwa pasien dan dokter benar-benar ada (jika disertakan dalam update)
+        if (pemeriksaanData.id_pasien) {
+            const pasienCheck = await db.query('SELECT id FROM pasien WHERE id = $1', [pemeriksaanData.id_pasien]);
+            if (pasienCheck.rows.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Pasien tidak ditemukan'
+                });
+            }
+        }
+
+        if (pemeriksaanData.id_dokter) {
+            const dokterCheck = await db.query('SELECT id FROM dokter WHERE id = $1', [pemeriksaanData.id_dokter]);
+            if (dokterCheck.rows.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Dokter tidak ditemukan'
+                });
+            }
+        }
+
         const updatedPemeriksaan = await pemeriksaanModel.updatePemeriksaan(id, pemeriksaanData);
 
         res.json({

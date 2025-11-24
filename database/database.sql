@@ -57,3 +57,19 @@ CREATE TABLE resep (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabel 'users' terpusat untuk otentikasi semua peran.
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL, -- Password akan di-hash menggunakan bcrypt
+    role VARCHAR(20) NOT NULL, -- e.g., 'admin', 'dokter', 'perawat', 'apoteker'
+    nama VARCHAR(100) NOT NULL,
+    
+    -- Kolom opsional yang bisa digunakan oleh role tertentu
+    spesialis VARCHAR(100),
+    nomor_telepon VARCHAR(20),
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

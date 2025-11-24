@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const DoctorForm = () => {
@@ -25,7 +25,7 @@ const DoctorForm = () => {
 
   const fetchDoctor = async () => {
     try {
-      const response = await axios.get(`/api/dokter/${id}`);
+      const response = await axios.get(`/dokter/${id}`);
       setFormData(response.data.data);
     } catch (err) {
       setError('Gagal mengambil data dokter');
@@ -48,11 +48,11 @@ const DoctorForm = () => {
     try {
       if (id) {
         // Update dokter
-        await axios.put(`/api/dokter/${id}`, formData);
+        await axios.put(`/dokter/${id}`, formData);
         alert('Dokter berhasil diperbarui');
       } else {
         // Tambah dokter baru
-        await axios.post('/api/dokter', formData);
+        await axios.post('/dokter', formData);
         alert('Dokter berhasil ditambahkan');
       }
       navigate('/doctors'); // Kembali ke daftar dokter
