@@ -31,204 +31,185 @@ const ExaminationForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Ambil spesialisasi dan semua diagnosa saat komponen dimuat (tanpa otentikasi dulu)
+  // Ambil spesialisasi dan semua diagnosa saat komponen dimuat
   useEffect(() => {
     if (isAuthenticated) {
       fetchSpecializations();
-      fetchAllDiagnoses(); // Ambil semua diagnosa terlebih dahulu
+      // Ambil semua diagnosa (tidak hanya default) untuk menampilkan semua pilihan
+      fetchAllDiagnoses();
     }
   }, [isAuthenticated]);
 
-    // Ambil diagnosa berdasarkan spesialisasi dokter saat dokter dipilih
-
-    useEffect(() => {
-
-      if (isAuthenticated) {
-
-        if (formData.id_dokter && formData.spesialisasi) {
-
-          fetchDiagnosesByDoctorSpecialization(formData.spesialisasi);
-
-        } else if (!formData.id_dokter) {
-
-          // Jika tidak ada dokter dipilih, tampilkan diagnosa umum
-
-          fetchGeneralDiagnoses();
-
-        }
-
+  // Ambil diagnosa berdasarkan spesialisasi dokter saat dokter dipilih
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (formData.id_dokter && formData.spesialisasi) {
+        // Ambil diagnosa berdasarkan spesialisasi jika dokter dan spesialisasi tersedia
+        fetchDiagnosesBySpecialization(formData.spesialisasi);
       }
+    }
+  }, [formData.id_dokter, formData.spesialisasi, isAuthenticated]);
 
-    }, [formData.id_dokter, formData.spesialisasi, isAuthenticated]);
+  // Ambil dokter berdasarkan spesialisasi saat dipilih
+  const fetchDoctorsBySpecialization = async (specialization) => {
+    try {
+      if (!isAuthenticated) return;
+      const response = await axios.get(`/dokter?spesialis=${encodeURIComponent(specialization)}`);
+      setAvailableDoctors(response.data.data);
+    } catch (error) {
+      console.error('Gagal mengambil daftar dokter:', error);
+    }
+  };
 
-    // Ambil dokter berdasarkan spesialisasi saat dipilih
+  const fetchSpecializations = async () => {
+    try {
+      if (!isAuthenticated) return;
+      const response = await axios.get('/dokter');
+      setAllDoctorsList(response.data.data);
+      const allSpecs = [...new Set(response.data.data.map(doc => doc.spesialis).filter(Boolean))];
+      setSpecializations(allSpecs);
+    } catch (error) {
+      console.error('Gagal mengambil daftar spesialisasi:', error);
+    }
+  };
 
-    const fetchDoctorsBySpecialization = async (specialization) => {
-
+  // Ambil SEMUA diagnosa dari database
+  const fetchAllDiagnoses = async () => {
+    try {
+      if (!isAuthenticated) return;
       try {
-
-        if (!isAuthenticated) return; // Tambahkan cek autentikasi
-
-        const response = await axios.get(`/dokter?spesialis=${encodeURIComponent(specialization)}`);
-
-        setAvailableDoctors(response.data.data);
-
-      } catch (error) {
-
-        console.error('Gagal mengambil daftar dokter:', error);
-
-      }
-
-    };
-
-    const fetchSpecializations = async () => {
-
-      try {
-
-        if (!isAuthenticated) return; // Tambahkan cek autentikasi
-
-        const response = await axios.get('/dokter');
-
-        setAllDoctorsList(response.data.data); // Simpan semua dokter
-
-        const allSpecs = [...new Set(response.data.data.map(doc => doc.spesialis).filter(Boolean))];
-
-        setSpecializations(allSpecs);
-
-      } catch (error) {
-
-        console.error('Gagal mengambil daftar spesialisasi:', error);
-
-      }
-
-    };
-
-    // Ambil SEMUA diagnosa (tanpa filter otentikasi sementara)
-    const fetchAllDiagnoses = async () => {
-      try {
-        if (!isAuthenticated) {
-          console.log('User tidak terotentikasi saat mengambil semua diagnosa');
-          return;
-        }
-
-        // Coba ambil semua diagnosa terlebih dahulu
-        try {
-          const response = await axios.get('/diagnosis');
-          if (response.data.success && response.data.data) {
-            setAvailableDiagnoses(response.data.data);
-            console.log('Semua diagnosa berhasil dimuat');
-          }
-        } catch (error) {
-          console.warn('Gagal mengambil semua diagnosa:', error.message);
-          // Jika gagal ambil semua, coba diagnosa umum
-          fetchGeneralDiagnoses();
-        }
-      } catch (error) {
-        console.error('Error saat mengambil diagnosa:', error);
-        setAvailableDiagnoses([]);
-      }
-    };
-
-    // Ambil diagnosa umum
-    const fetchGeneralDiagnoses = async () => {
-      try {
-        if (!isAuthenticated) {
-          console.log('User tidak terotentikasi saat mengambil diagnosa umum');
-          return;
-        }
-
-        try {
-          const response = await axios.get('/diagnosis/umum');
-          console.log('Respons dari /diagnosis/umum:', response.data);
-
-          if (response.data.success && response.data.data) {
-            setAvailableDiagnoses(response.data.data);
-          } else {
-            console.warn('Data diagnosa umum tidak lengkap atau tidak tersedia');
-            // Gunakan diagnosa default jika API gagal
-            setAvailableDiagnoses([
-              { kode_diagnosa: 'Z00.0', nama_diagnosa: 'Pemeriksaan Kesehatan Rutin' },
-              { kode_diagnosa: 'R51', nama_diagnosa: 'Sakit Kepala' },
-              { kode_diagnosa: 'R10.13', nama_diagnosa: 'Nyeri Perut' },
-              { kode_diagnosa: 'R05', nama_diagnosa: 'Batuk' },
-              { kode_diagnosa: 'R06.02', nama_diagnosa: 'Sesak Napas' },
-              { kode_diagnosa: 'R50.9', nama_diagnosa: 'Demam' }
-            ]);
-          }
-        } catch (error) {
-          console.error('Error saat mengambil diagnosa umum:', error);
-          // Gunakan diagnosa default jika API gagal
-          setAvailableDiagnoses([
-            { kode_diagnosa: 'Z00.0', nama_diagnosa: 'Pemeriksaan Kesehatan Rutin' },
-            { kode_diagnosa: 'R51', nama_diagnosa: 'Sakit Kepala' },
-            { kode_diagnosa: 'R10.13', nama_diagnosa: 'Nyeri Perut' },
-            { kode_diagnosa: 'R05', nama_diagnosa: 'Batuk' },
-            { kode_diagnosa: 'R06.02', nama_diagnosa: 'Sesak Napas' },
-            { kode_diagnosa: 'R50.9', nama_diagnosa: 'Demam' }
-          ]);
-        }
-      } catch (error) {
-        console.error('Error lengkap saat mengambil diagnosa umum:', error);
-        // Gunakan diagnosa default jika semuanya gagal
-        setAvailableDiagnoses([
-          { kode_diagnosa: 'Z00.0', nama_diagnosa: 'Pemeriksaan Kesehatan Rutin' },
-          { kode_diagnosa: 'R51', nama_diagnosa: 'Sakit Kepala' },
-          { kode_diagnosa: 'R10.13', nama_diagnosa: 'Nyeri Perut' },
-          { kode_diagnosa: 'R05', nama_diagnosa: 'Batuk' },
-          { kode_diagnosa: 'R06.02', nama_diagnosa: 'Sesak Napas' },
-          { kode_diagnosa: 'R50.9', nama_diagnosa: 'Demam' }
-        ]);
-      }
-    };
-
-    const fetchDiagnosesByDoctorSpecialization = async (specializationParam = null) => {
-      try {
-        if (!isAuthenticated) return; // Tambahkan cek autentikasi
-
-        const specializationToUse = specializationParam || formData.spesialisasi;
-
-        if (specializationToUse) {
-          try {
-            const response = await axios.get(`/diagnosis/spesialisasi/${specializationToUse}`);
-            if (response.data.success && response.data.data) {
-              setAvailableDiagnoses(response.data.data);
-            } else {
-              console.warn('Data diagnosa berdasarkan spesialisasi tidak lengkap');
-              await fetchGeneralDiagnoses(); // Fallback jika data spesialisasi tidak lengkap
-            }
-          } catch (error) {
-            console.error('Error saat mengambil diagnosa spesialisasi:', error);
-            // Jika gagal dengan spesialisasi, kembali ke diagnosa umum
-            await fetchGeneralDiagnoses();
-          }
+        const response = await axios.get('/diagnosis');
+        if (response.data.success && response.data.data) {
+          setAvailableDiagnoses(response.data.data);
         } else {
-          // Jika tidak bisa mendapatkan spesialisasi dari dokter, kembalikan ke diagnosa umum
-          await fetchGeneralDiagnoses();
+          // Jika response tidak sukses, gunakan fallback
+          loadDefaultDiagnoses();
         }
       } catch (error) {
-        console.warn('Gagal mengambil daftar diagnosa berdasarkan spesialisasi dokter, kembali ke diagnosa umum:', error.message);
-        // Jika gagal, kembali ke diagnosa umum
-        await fetchGeneralDiagnoses();
+        console.warn('Gagal mengambil semua diagnosa dari server:', error.message);
+        // Jika endpoint gagal, tetap coba ambil diagnosa umum
+        fetchGeneralDiagnoses();
       }
-    };
+    } catch (error) {
+      console.error('Error saat mengambil semua diagnosa:', error);
+      loadDefaultDiagnoses();
+    }
+  };
+
+  // Ambil diagnosa umum
+  const fetchGeneralDiagnoses = async () => {
+    try {
+      if (!isAuthenticated) return;
+      try {
+        const response = await axios.get('/diagnosis/umum');
+        if (response.data.success && response.data.data) {
+          setAvailableDiagnoses(response.data.data);
+        } else {
+          loadDefaultDiagnoses();
+        }
+      } catch (error) {
+        console.warn('Gagal mengambil diagnosa umum:', error.message);
+        loadDefaultDiagnoses();
+      }
+    } catch (error) {
+      console.error('Error saat mengambil diagnosa umum:', error);
+      loadDefaultDiagnoses();
+    }
+  };
+
+  // Ambil diagnosa berdasarkan spesialisasi
+  const fetchDiagnosesBySpecialization = async (specialization) => {
+    try {
+      if (!isAuthenticated) return;
+
+      try {
+        const response = await axios.get(`/diagnosis/spesialisasi/${specialization}`);
+        if (response.data.success && response.data.data) {
+          setAvailableDiagnoses(response.data.data);
+        } else {
+          // Jika spesialisasi tidak memberikan hasil, kembali ke semua diagnosa
+          fetchAllDiagnoses();
+        }
+      } catch (error) {
+        console.warn('Gagal mengambil diagnosa per spesialisasi, kembali ke semua diagnosa:', error.message);
+        // Jika endpoint spesialisasi gagal, kembali ke semua diagnosa
+        fetchAllDiagnoses();
+      }
+    } catch (error) {
+      console.error('Error saat mengambil diagnosa per spesialisasi:', error);
+      // Jika terjadi error total, gunakan fallback
+      loadDefaultDiagnoses();
+    }
+  };
+
+  // Fungsi untuk memuat diagnosa default
+  const loadDefaultDiagnoses = () => {
+    setAvailableDiagnoses([
+      { kode_diagnosa: 'Z00.0', nama_diagnosa: 'Pemeriksaan Kesehatan Rutin' },
+      { kode_diagnosa: 'R51', nama_diagnosa: 'Sakit Kepala' },
+      { kode_diagnosa: 'R10.13', nama_diagnosa: 'Nyeri Perut' },
+      { kode_diagnosa: 'R05', nama_diagnosa: 'Batuk' },
+      { kode_diagnosa: 'R06.02', nama_diagnosa: 'Sesak Napas' },
+      { kode_diagnosa: 'R50.9', nama_diagnosa: 'Demam' },
+      { kode_diagnosa: 'I10', nama_diagnosa: 'Hipertensi Esensial' },
+      { kode_diagnosa: 'E11.9', nama_diagnosa: 'Diabetes Mellitus Tipe 2 Tanpa Komplikasi' }
+    ]);
+  };
 
   const isEditMode = !!examinationId;
 
-  // Mengatur ID pasien dan dokter
+  // Mengatur ID pasien dan dokter - PENTING: Tambahkan dependensi allDoctorsList
   useEffect(() => {
     const patientId = patientIdFromUrl || (isEditMode ? formData.id_pasien : '');
     let doctorIdToSet = '';
     let doctorSpecializationToSet = '';
 
     if (isAuthenticated && currentUser && allDoctorsList.length > 0) {
-      // Karena sistem otentikasi menggunakan tabel users dan examination menggunakan tabel dokter,
-      // kita cocokkan berdasarkan nama bukan ID
-      const foundDoctor = allDoctorsList.find(doc => doc.nama === currentUser.nama);
+      // Kita akan mencoba berbagai metode untuk mencocokkan dokter
+
+      // Metode 1: Coba cocokkan berdasarkan nama lengkap
+      const currentUserName = currentUser.name || currentUser.nama;
+      let foundDoctor = allDoctorsList.find(doc => doc.nama === currentUserName);
+
+      // Metode 2: Jika tidak ditemukan, coba cocokkan dengan mencari yang mengandung nama yang sama
+      if (!foundDoctor) {
+        foundDoctor = allDoctorsList.find(doc =>
+          doc.nama.toLowerCase().includes(currentUserName.toLowerCase())
+        );
+      }
+
+      // Metode 3: Jika masih tidak ditemukan, coba cocokkan berdasarkan username
+      if (!foundDoctor) {
+        // Kita coba untuk mengonversi username ke format nama dokter
+        const username = currentUser.username;
+        if (username && username.startsWith('dr.')) {
+          // Format username mungkin seperti 'dr.andipratama', konversi ke 'Dr. Andi Pratama'
+          const namePart = username
+            .replace('dr.', '')
+            .replace('.', ' ')
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+          // Tambahkan "Dr. " di awal
+          const possibleName = 'Dr. ' + namePart.charAt(0).toUpperCase() + namePart.slice(1);
+
+          foundDoctor = allDoctorsList.find(doc =>
+            doc.nama === possibleName || doc.nama.includes(namePart)
+          );
+        }
+      }
+
       if (foundDoctor) {
         doctorIdToSet = foundDoctor.id;
         doctorSpecializationToSet = foundDoctor.spesialis || foundDoctor.spesialisasi;
       } else {
-        console.warn('Current user name does not match any doctor in the list. Please ensure the logged-in user is a doctor or select one manually.');
+        // Tambahkan pesan debugging
+        console.log('User saat ini:', currentUser);
+        console.log('Daftar dokter:', allDoctorsList);
+        console.log('Nama user yang dicari:', currentUserName, '- tidak ditemukan di list dokter');
+        // Tampilkan kemungkinan nama dokter yang ada
+        console.log('Nama-nama dokter yang tersedia:', allDoctorsList.map(d => d.nama));
       }
     }
 
@@ -300,18 +281,11 @@ const ExaminationForm = () => {
     if (value) {
       await fetchDoctorsBySpecialization(value);
       // Ambil diagnosa berdasarkan spesialisasi yang dipilih
-      try {
-        const response = await axios.get(`/diagnosis/spesialisasi/${value}`);
-        setAvailableDiagnoses(response.data.data);
-      } catch (error) {
-        console.error('Gagal mengambil daftar diagnosa berdasarkan spesialisasi:', error);
-        // Jika gagal, tetap ambil diagnosa umum
-        await fetchGeneralDiagnoses();
-      }
+      fetchDiagnosesBySpecialization(value);
     } else {
       setAvailableDoctors([]);
-      // Jika tidak ada spesialisasi dipilih, tampilkan diagnosa umum
-      await fetchGeneralDiagnoses();
+      // Kembali ke semua diagnosa
+      fetchAllDiagnoses();
     }
 
     // Juga reset dokter yang dipilih saat spesialisasi berubah

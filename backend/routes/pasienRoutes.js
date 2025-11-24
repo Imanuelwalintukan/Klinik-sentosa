@@ -10,14 +10,14 @@ router.get('/', protect, authorize('dokter', 'perawat', 'admin'), pasienControll
 // Mendapatkan pasien berdasarkan ID - Staf klinis dan admin
 router.get('/:id', protect, authorize('dokter', 'perawat', 'admin'), pasienController.getPasienById);
 
-// Membuat pasien baru - Perawat atau Admin
-router.post('/', protect, authorize('perawat', 'admin'), pasienController.createPasien);
+// Membuat pasien baru - Dokter, Perawat, atau Admin
+router.post('/', protect, authorize('dokter', 'perawat', 'admin'), pasienController.createPasien);
 
 // Mendaftarkan pasien baru (untuk pendaftaran online) - Rute ini publik
 router.post('/register', pasienController.registerPasien);
 
-// Memperbarui data pasien - Perawat atau Admin
-router.put('/:id', protect, authorize('perawat', 'admin'), pasienController.updatePasien);
+// Memperbarui data pasien - Perawat, Dokter, atau Admin
+router.put('/:id', protect, authorize('perawat', 'dokter', 'admin'), pasienController.updatePasien);
 
 // Menghapus pasien - Hanya Admin
 router.delete('/:id', protect, authorize('admin'), pasienController.deletePasien);
