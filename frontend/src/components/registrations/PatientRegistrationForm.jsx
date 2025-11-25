@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Gunakan axios standar dengan URL lengkap
+import axios from 'axios'; // Gunakan axios standar, tetapi tanpa baseURL agar tidak terjadi duplikasi
 import './RegistrationForm.css';
 
 const PatientRegistrationForm = () => {
@@ -34,7 +34,7 @@ const PatientRegistrationForm = () => {
     setError(null);
 
     try {
-      const response = await axios.post('/api/pasien/register', formData);
+      const response = await axios.post('http://localhost:3000/api/pasien/register', formData);
       setSuccess(true);
       setFormData({
         nama: '',

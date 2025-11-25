@@ -38,6 +38,44 @@ const getPemeriksaanByPasienId = async (pasienId) => {
   return result.rows;
 };
 
+// Fungsi untuk mendapatkan pemeriksaan berdasarkan ID user
+const getPemeriksaanByUserId = async (userId) => {
+  // Pertama, cari ID pasien berdasarkan ID user
+  const patientResult = await db.query('SELECT id FROM pasien WHERE id_user = $1', [userId]);
+
+  if (patientResult.rows.length === 0) {
+    // Jika tidak ada pasien terkait dengan user, kembalikan array kosong
+    return [];
+  }
+
+  const patientId = patientResult.rows[0].id;
+
+  // Lalu ambil semua pemeriksaan untuk pasien tersebut
+  const result = await db.query(`
+    SELECT p.*, pas.nama AS nama_pasien, d.nama AS nama_dokter
+    FROM pemeriksaan p
+    LEFT JOIN pasien pas ON p.id_pasien = pas.id
+    LEFT JOIN dokter d ON p.id_dokter = d.id
+    WHERE p.id_pasien = $1
+    ORDER BY p.tanggal_pemeriksaan DESC
+  `, [patientId]);
+
+  return result.rows;
+};
+
+// Fungsi untuk mendapatkan pemeriksaan berdasarkan ID dokter
+const getPemeriksaanByDokterId = async (dokterId) => {
+  const result = await db.query(`
+    SELECT p.*, pas.nama AS nama_pasien, d.nama AS nama_dokter
+    FROM pemeriksaan p
+    LEFT JOIN pasien pas ON p.id_pasien = pas.id
+    LEFT JOIN dokter d ON p.id_dokter = d.id
+    WHERE p.id_dokter = $1
+    ORDER BY p.tanggal_pemeriksaan DESC
+  `, [dokterId]);
+  return result.rows;
+};
+
 // Fungsi untuk menambahkan pemeriksaan baru
 const createPemeriksaan = async (pemeriksaanData) => {
   const { id_pasien, id_dokter, tanggal_pemeriksaan, keluhan, diagnosa, rekomendasi_pengobatan } = pemeriksaanData;
@@ -68,6 +106,8 @@ module.exports = {
   getAllPemeriksaan,
   getPemeriksaanById,
   getPemeriksaanByPasienId,
+  getPemeriksaanByUserId,
+  getPemeriksaanByDokterId,
   createPemeriksaan,
   updatePemeriksaan,
   deletePemeriksaan

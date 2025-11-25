@@ -146,6 +146,29 @@ const dispenseResep = async (req, res) => {
     }
 };
 
+const getUnpaidPrescriptions = async (req, res) => {
+    try {
+        console.log('Memanggil getUnpaidPrescriptions...');
+        const reseps = await resepModel.getUnpaidPrescriptions();
+        console.log('Jumlah resep yang ditemukan:', reseps.length);
+        res.json({
+            success: true,
+            data: reseps
+        });
+    } catch (error) {
+        console.error('Error di getUnpaidPrescriptions controller:', {
+            message: error.message,
+            stack: error.stack,
+            code: error.code
+        });
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error: ' + error.message,
+            ...(process.env.NODE_ENV === 'development' && { error: error.message, stack: error.stack })
+        });
+    }
+};
+
 module.exports = {
     getAllResep,
     getResepById,
@@ -154,5 +177,6 @@ module.exports = {
     updateResep,
     deleteResep,
     createBulkResep,
-    dispenseResep
+    dispenseResep,
+    getUnpaidPrescriptions
 };

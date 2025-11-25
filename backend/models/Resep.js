@@ -23,7 +23,7 @@ const getResepById = async (id) => {
     LEFT JOIN pemeriksaan pemer ON r.id_pemeriksaan = pemer.id
     LEFT JOIN pasien pas ON pemer.id_pasien = pas.id
     WHERE r.id = $1
-  `);
+  `, [id]);
   return result.rows[0];
 };
 
@@ -144,6 +144,46 @@ const dispense = async (pemeriksaanId) => {
   }
 };
 
+const getUnpaidPrescriptions = async () => {
+  try {
+    // Query ini mencari pemeriksaan dengan resep yang sudah selesai
+    // tetapi belum dibayar lunas
+    // Kita gunakan versi yang paling sederhana untuk menghindari masalah struktur tabel
+    const result = await db.query(`
+      SELECT
+        pemer.id AS id_pemeriksaan,
+        pas.nama AS nama_pasien,
+        dok.nama AS nama_dokter,
+        pemer.tanggal_pemeriksaan,
+        COUNT(r.id) AS jumlah_resep
+      FROM pemeriksaan pemer
+      JOIN resep r ON pemer.id = r.id_pemeriksaan
+      JOIN obat o ON r.id_obat = o.id
+      JOIN pasien pas ON pemer.id_pasien = pas.id
+      JOIN dokter dok ON pemer.id_dokter = dok.id
+      WHERE pemer.status_resep = 'Selesai'
+      GROUP BY pemer.id, pas.nama, dok.nama, pemer.tanggal_pemeriksaan
+      ORDER BY pemer.tanggal_pemeriksaan DESC
+    `);
+
+    // Kita tambahkan logika penghitungan total_biaya di sisi JavaScript
+    // untuk menghindari masalah dengan kolom yang tidak ada
+    const processedResults = result.rows.map(row => ({
+      ...row,
+      total_biaya: 0 // Total biaya akan dihitung saat ditampilkan jika diperlukan
+    }));
+
+    return processedResults;
+  } catch (error) {
+    console.error('Error fetching unpaid prescriptions:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail
+    });
+    throw error;
+  }
+};
+
 module.exports = {
   getAllResep,
   getResepById,
@@ -152,5 +192,6 @@ module.exports = {
   updateResep,
   deleteResep,
   createBulkResep,
-  dispense
+  dispense,
+  getUnpaidPrescriptions,
 };

@@ -143,6 +143,61 @@ const updatePemeriksaan = async (req, res) => {
     }
 };
 
+const getPemeriksaanByUserId = async (req, res) => {
+    try {
+        const { userId } = req.user; // Dapatkan ID user dari token JWT
+        const pemeriksaans = await pemeriksaanModel.getPemeriksaanByUserId(userId);
+
+        res.json({
+            success: true,
+            data: pemeriksaans
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Fungsi untuk mendapatkan pemeriksaan berdasarkan ID dokter yang sedang login
+const getPemeriksaanByDokterId = async (req, res) => {
+    try {
+        const { userId, role } = req.user; // Dapatkan ID user dan role dari token JWT
+
+        // Untuk dokter, kita perlu mendapatkan id_dokter dari tabel dokter
+        // Cek apakah user saat ini adalah dokter
+        if (role !== 'dokter') {
+            return res.status(403).json({
+                success: false,
+                message: 'Hanya dokter yang dapat mengakses riwayat pemeriksaan mereka sendiri'
+            });
+        }
+
+        // Cari id_dokter berdasarkan id_user
+        const dokterResult = await db.query('SELECT id FROM dokter WHERE id_user = $1', [userId]);
+        if (dokterResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Dokter terkait dengan user ini tidak ditemukan'
+            });
+        }
+
+        const dokterId = dokterResult.rows[0].id;
+        const pemeriksaans = await pemeriksaanModel.getPemeriksaanByDokterId(dokterId);
+
+        res.json({
+            success: true,
+            data: pemeriksaans
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 const deletePemeriksaan = async (req, res) => {
     try {
         const { id } = req.params;
@@ -164,6 +219,8 @@ module.exports = {
     getAllPemeriksaan,
     getPemeriksaanById,
     getPemeriksaanByPasienId,
+    getPemeriksaanByUserId,
+    getPemeriksaanByDokterId,
     createPemeriksaan,
     updatePemeriksaan,
     deletePemeriksaan

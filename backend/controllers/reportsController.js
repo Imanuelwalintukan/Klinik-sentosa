@@ -1,24 +1,15 @@
 // reportsController.js
-const { Pool } = require('pg');
-require('dotenv').config();
-
-const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'klinik_sentosa',
-  password: process.env.DB_PASS || 'postgres',
-  port: process.env.DB_PORT || 5432,
-});
+const db = require('../config/database');
 
 // Laporan ringkasan umum
 const getSummaryReport = async (req, res) => {
   try {
     // Ambil jumlah total dari setiap entitas
     const [totalPatients, totalDoctors, totalExaminations, totalMedications] = await Promise.all([
-      pool.query('SELECT COUNT(*) as count FROM pasien'),
-      pool.query('SELECT COUNT(*) as count FROM dokter'),
-      pool.query('SELECT COUNT(*) as count FROM pemeriksaan'),
-      pool.query('SELECT COUNT(*) as count FROM obat')
+      db.query('SELECT COUNT(*) as count FROM pasien'),
+      db.query('SELECT COUNT(*) as count FROM dokter'),
+      db.query('SELECT COUNT(*) as count FROM pemeriksaan'),
+      db.query('SELECT COUNT(*) as count FROM obat')
     ]);
 
     res.json({
@@ -44,8 +35,8 @@ const getSummaryReport = async (req, res) => {
 const getMonthlyReport = async (req, res) => {
   try {
     // Ambil data pemeriksaan per bulan
-    const result = await pool.query(`
-      SELECT 
+    const result = await db.query(`
+      SELECT
         EXTRACT(YEAR FROM tanggal_pemeriksaan) as year,
         EXTRACT(MONTH FROM tanggal_pemeriksaan) as month,
         COUNT(*) as examination_count
@@ -78,7 +69,7 @@ const getMonthlyReport = async (req, res) => {
 const getMedicationStockReport = async (req, res) => {
   try {
     // Ambil semua data obat
-    const result = await pool.query(`
+    const result = await db.query(`
       SELECT id, nama_obat, stok, harga
       FROM obat
       ORDER BY nama_obat
@@ -103,7 +94,7 @@ const getPatientHistoryReport = async (req, res) => {
   try {
     // Ambil data pasien dengan jumlah pemeriksaan
     const result = await pool.query(`
-      SELECT 
+      SELECT
         p.id as id_pasien,
         p.nama as nama_pasien,
         COUNT(pe.id) as examination_count
@@ -127,9 +118,57 @@ const getPatientHistoryReport = async (req, res) => {
   }
 };
 
+// Laporan obat paling banyak diresepkan
+const getMostPrescribedMedicines = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    // Menentukan query berdasarkan adanya filter tanggal
+    let baseQuery = `
+      SELECT
+        o.nama_obat,
+        COUNT(r.id) as prescription_count
+      FROM resep r
+      JOIN obat o ON r.id_obat = o.id
+      JOIN pemeriksaan p ON r.id_pemeriksaan = p.id
+    `;
+
+    if (startDate && endDate) {
+      baseQuery += `WHERE p.tanggal_pemeriksaan BETWEEN $1 AND $2 `;
+    }
+
+    baseQuery += `GROUP BY o.id, o.nama_obat ORDER BY prescription_count DESC`;
+
+    let result;
+    if (startDate && endDate) {
+      result = await db.query(baseQuery, [startDate, endDate]);
+    } else {
+      result = await db.query(baseQuery);
+    }
+
+    res.json({
+      success: true,
+      data: {
+        medicines: result.rows
+      }
+    });
+  } catch (error) {
+    console.error('Error getting most prescribed medicines:', error.message);
+    console.error('Stack trace:', error.stack);
+
+    // Kirim error yang lebih informatif dalam mode development
+    res.status(500).json({
+      success: false,
+      message: process.env.NODE_ENV === 'development' ? error.message : 'Terjadi kesalahan saat mengambil data laporan obat',
+      ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+    });
+  }
+};
+
 module.exports = {
   getSummaryReport,
   getMonthlyReport,
   getMedicationStockReport,
-  getPatientHistoryReport
+  getPatientHistoryReport,
+  getMostPrescribedMedicines
 };

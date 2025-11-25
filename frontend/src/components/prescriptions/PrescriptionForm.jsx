@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../axiosConfig';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../auth/AuthProvider'; // Import useAuth
+import { useAuth } from '../auth/AuthProvider';
 import './PrescriptionForm.css';
 
 const PrescriptionForm = () => {
   const [searchParams] = useSearchParams();
-  const examinationId = searchParams.get('examinationId');
+  const examinationIdFromUrl = searchParams.get('examinationId');
   const navigate = useNavigate();
-  
+
+  const { currentUser, isAuthenticated } = useAuth();
+
   const [examination, setExamination] = useState(null);
   const [medications, setMedications] = useState([]);
   const [prescriptionItems, setPrescriptionItems] = useState([
@@ -16,33 +18,56 @@ const PrescriptionForm = () => {
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
-  // Fetch examination context and all available medications
   useEffect(() => {
     if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (currentUser?.role !== 'dokter') {
+      setError('Hanya dokter yang dapat membuat resep.');
       setLoading(false);
       return;
     }
 
-    if (!examinationId) {
+    // Jika examinationIdFromUrl tidak ada, tampilkan error
+    if (!examinationIdFromUrl) {
       setError('ID Pemeriksaan tidak ditemukan di URL. Silakan kembali ke halaman pemeriksaan untuk membuat resep.');
+      setLoading(false);
       return;
     }
 
+    fetchPrescriptionData();
+  }, [examinationIdFromUrl, isAuthenticated, currentUser, navigate]);
+
+  const fetchPrescriptionData = async () => {
     setLoading(true);
-    // Fetch examination details
-    axios.get(`/pemeriksaan/${examinationId}`)
-      .then(res => setExamination(res.data.data))
-      .catch(() => setError('Gagal mengambil data pemeriksaan.'));
+    setError(null);
 
-    // Fetch all medications for dropdowns
-    axios.get('/obat')
-      .then(res => setMedications(res.data.data))
-      .catch(() => setError('Gagal mengambil data obat.'))
-      .finally(() => setLoading(false));
+    try {
+      // Ambil detail pemeriksaan
+      const examResponse = await axios.get(`/pemeriksaan/${examinationIdFromUrl}`);
+      if (examResponse.data.success) {
+        setExamination(examResponse.data.data);
+      } else {
+        throw new Error('Data pemeriksaan tidak ditemukan');
+      }
 
-  }, [examinationId, isAuthenticated]);
+      // Ambil daftar obat
+      const medicationResponse = await axios.get('/obat');
+      if (medicationResponse.data.success) {
+        setMedications(medicationResponse.data.data);
+      } else {
+        throw new Error('Gagal mengambil data obat');
+      }
+    } catch (err) {
+      setError('Gagal mengambil data: ' + (err.response?.data?.message || err.message));
+      console.error('Error saat mengambil data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleItemChange = (index, event) => {
     const { name, value } = event.target;
@@ -56,7 +81,7 @@ const PrescriptionForm = () => {
   };
 
   const removeItem = (index) => {
-    if (prescriptionItems.length <= 1) return; // Must have at least one item
+    if (prescriptionItems.length <= 1) return; // Harus ada setidaknya satu item
     const items = [...prescriptionItems];
     items.splice(index, 1);
     setPrescriptionItems(items);
@@ -67,8 +92,11 @@ const PrescriptionForm = () => {
     setLoading(true);
     setError(null);
 
-    // Filter out empty items
-    const validItems = prescriptionItems.filter(item => item.id_obat && item.jumlah > 0 && item.aturan_pakai);
+    // Filter item yang diisi lengkap
+    const validItems = prescriptionItems.filter(item =>
+      item.id_obat && item.jumlah > 0 && item.aturan_pakai
+    );
+
     if (validItems.length === 0) {
       setError('Harap isi setidaknya satu item resep dengan lengkap.');
       setLoading(false);
@@ -76,12 +104,17 @@ const PrescriptionForm = () => {
     }
 
     try {
-      await axios.post('/resep/bulk', {
-        examinationId: examinationId,
+      const response = await axios.post('/resep/bulk', {
+        examinationId: examinationIdFromUrl,
         items: validItems
       });
-      alert('Resep berhasil disimpan!');
-      navigate(`/examinations/${examinationId}`); // Redirect to examination detail
+
+      if (response.data.success) {
+        alert('Resep berhasil disimpan!');
+        navigate(`/examinations/${examinationIdFromUrl}`);
+      } else {
+        throw new Error(response.data.message || 'Gagal menyimpan resep');
+      }
     } catch (err) {
       setError('Gagal menyimpan resep: ' + (err.response?.data?.message || err.message));
     } finally {
@@ -89,15 +122,40 @@ const PrescriptionForm = () => {
     }
   };
 
+  if (error) {
+    return (
+      <div className="prescription-form">
+        <h2>Buat Resep</h2>
+        <div className="alert alert-danger">{error}</div>
+        <div className="form-actions">
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate('/examinations')}
+          >
+            Kembali ke Daftar Pemeriksaan
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={fetchPrescriptionData}
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (loading && !examination) {
-    return <div className="prescription-form"><h2>Memuat...</h2></div>;
+    return <div className="prescription-form"><h2>Memuat data...</h2></div>;
   }
 
   return (
     <div className="prescription-form">
       <h2>Buat Resep</h2>
+
       {examination && (
         <div className="examination-context">
+          <h4>Informasi Pemeriksaan</h4>
           <p><strong>Pasien:</strong> {examination.nama_pasien}</p>
           <p><strong>Tanggal:</strong> {new Date(examination.tanggal_pemeriksaan).toLocaleString('id-ID')}</p>
           <p><strong>Diagnosa:</strong> {examination.diagnosa}</p>
@@ -105,89 +163,106 @@ const PrescriptionForm = () => {
       )}
 
       {error && (
-        <div className="alert alert-danger">
-          {error}
-          {!examinationId && (
-            <div style={{ marginTop: '10px' }}>
-              <button
-                className="btn btn-primary"
-                onClick={() => navigate('/examinations')}
+        <div className="alert alert-danger">{error}</div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <h3>Daftar Obat dalam Resep</h3>
+        {prescriptionItems.map((item, index) => (
+          <div className="prescription-item-row" key={index}>
+            <div className="form-group item-medication">
+              <label htmlFor={`id_obat_${index}`}>Obat</label>
+              <select
+                id={`id_obat_${index}`}
+                name="id_obat"
+                value={item.id_obat}
+                onChange={(e) => handleItemChange(index, e)}
+                required
               >
-                Kembali ke Daftar Pemeriksaan
-              </button>
+                <option value="">Pilih Obat</option>
+                {medications.map(med => (
+                  <option key={med.id} value={med.id}>
+                    {med.nama_obat} (Stok: {med.stok})
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-        </div>
-      )}
 
-      {!error && !examinationId ? null : (
-        <form onSubmit={handleSubmit}>
-          {prescriptionItems.map((item, index) => (
-            <div className="prescription-item-row" key={index}>
-              <div className="form-group item-medication">
-                <label htmlFor={`id_obat_${index}`}>Obat</label>
-                <select
-                  id={`id_obat_${index}`}
-                  name="id_obat"
-                  value={item.id_obat}
-                  onChange={(e) => handleItemChange(index, e)}
-                  required
-                >
-                  <option value="">Pilih Obat</option>
-                  {medications.map(med => (
-                    <option key={med.id} value={med.id}>
-                      {med.nama_obat} (Stok: {med.stok})
-                    </option>
-                  ))}
-                </select>
+            <div className="form-group item-quantity">
+              <label htmlFor={`jumlah_${index}`}>Jumlah</label>
+              <input
+                type="number"
+                id={`jumlah_${index}`}
+                name="jumlah"
+                value={item.jumlah}
+                onChange={(e) => handleItemChange(index, e)}
+                min="1"
+                required
+              />
+            </div>
+
+            <div className="form-group item-usage">
+              <label htmlFor={`aturan_pakai_${index}`}>Aturan Pakai</label>
+              <select
+                id={`aturan_pakai_${index}`}
+                name="aturan_pakai"
+                value={item.aturan_pakai}
+                onChange={(e) => handleItemChange(index, e)}
+                required
+              >
+                <option value="">Pilih Aturan Pakai</option>
+                <option value="1x sehari sebelum makan">1x sehari sebelum makan</option>
+                <option value="1x sehari sesudah makan">1x sehari sesudah makan</option>
+                <option value="2x sehari (pagi dan sore)">2x sehari (pagi dan sore)</option>
+                <option value="3x sehari (pagi, siang, sore)">3x sehari (pagi, siang, sore)</option>
+                <option value="1x sehari sebelum tidur">1x sehari sebelum tidur</option>
+                <option value="Sesuai petunjuk dokter">Sesuai petunjuk dokter</option>
+                <option value="Sesuai kebutuhan">Sesuai kebutuhan</option>
+              </select>
+              <div className="form-note">
+                <small>Atau:</small>
               </div>
+              <input
+                type="text"
+                name="aturan_pakai"
+                value={item.aturan_pakai}
+                onChange={(e) => handleItemChange(index, e)}
+                placeholder="Tulis aturan pakai lainnya"
+              />
+            </div>
 
-              <div className="form-group item-quantity">
-                <label htmlFor={`jumlah_${index}`}>Jumlah</label>
-                <input
-                  type="number"
-                  id={`jumlah_${index}`}
-                  name="jumlah"
-                  value={item.jumlah}
-                  onChange={(e) => handleItemChange(index, e)}
-                  min="1"
-                  required
-                />
-              </div>
-
-              <div className="form-group item-usage">
-                <label htmlFor={`aturan_pakai_${index}`}>Aturan Pakai</label>
-                <input
-                  type="text"
-                  id={`aturan_pakai_${index}`}
-                  name="aturan_pakai"
-                  value={item.aturan_pakai}
-                  onChange={(e) => handleItemChange(index, e)}
-                  placeholder="Contoh: 3x sehari setelah makan"
-                  required
-                />
-              </div>
-
+            {prescriptionItems.length > 1 && (
               <div className="item-actions">
-                <button type="button" className="btn-remove-item" onClick={() => removeItem(index)}>&times;</button>
+                <button
+                  type="button"
+                  className="btn-remove-item"
+                  onClick={() => removeItem(index)}
+                  title="Hapus item ini"
+                >
+                  &times;
+                </button>
               </div>
-            </div>
-          ))}
-
-          <button type="button" className="btn btn-outline-primary" onClick={addItem}>
-            + Tambah Obat Lain
-          </button>
-
-          <div className="form-actions">
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Menyimpan...' : 'Simpan Resep'}
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={() => navigate(`/examinations/${examinationId}`)}>
-              Batal
-            </button>
+            )}
           </div>
-        </form>
-      )}
+        ))}
+
+        <button type="button" className="btn btn-outline-primary" onClick={addItem}>
+          + Tambah Obat Lain
+        </button>
+
+        <div className="form-actions">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Menyimpan...' : 'Simpan Resep'}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => navigate(`/examinations/${examinationIdFromUrl}`)}
+          >
+            Batal
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

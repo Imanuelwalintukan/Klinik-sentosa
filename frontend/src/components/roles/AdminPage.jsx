@@ -1,6 +1,7 @@
 // AdminPage.jsx
 import React from 'react';
 import { useAuth } from '../auth/AuthProvider';
+import './AdminPage.css'; // Import CSS khusus untuk halaman admin
 
 const AdminPage = () => {
   const { currentUser } = useAuth();
@@ -9,7 +10,7 @@ const AdminPage = () => {
     <div className="admin-page">
       <h2>Selamat Datang, {currentUser?.name}!</h2>
       <p>Anda masuk sebagai Administrator. Anda memiliki akses penuh ke sistem manajemen klinik.</p>
-      
+
       <div className="admin-dashboard">
         <h3>Menu Administrator</h3>
         <div className="admin-menu-grid">
@@ -20,7 +21,7 @@ const AdminPage = () => {
               <a href="/patients" className="btn btn-primary">Lihat Daftar</a>
             </div>
           </div>
-          
+
           <div className="menu-item">
             <h4>Manajemen Dokter</h4>
             <p>Kelola data dokter</p>
@@ -28,7 +29,7 @@ const AdminPage = () => {
               <a href="/doctors" className="btn btn-primary">Lihat Daftar</a>
             </div>
           </div>
-          
+
           <div className="menu-item">
             <h4>Manajemen Perawat</h4>
             <p>Kelola data perawat</p>
@@ -36,9 +37,7 @@ const AdminPage = () => {
               <a href="/nurses" className="btn btn-primary">Lihat Daftar</a>
             </div>
           </div>
-          
 
-          
           <div className="menu-item">
             <h4>Manajemen Obat</h4>
             <p>Kelola data obat</p>
@@ -46,9 +45,15 @@ const AdminPage = () => {
               <a href="/medications" className="btn btn-primary">Lihat Daftar</a>
             </div>
           </div>
-          
 
-          
+          <div className="menu-item">
+            <h4>Manajemen Pembayaran</h4>
+            <p>Kelola metode pembayaran</p>
+            <div className="menu-actions">
+              <a href="/payment-methods" className="btn btn-primary">Kelola</a>
+            </div>
+          </div>
+
           <div className="menu-item">
             <h4>Laporan</h4>
             <p>Lihat laporan klinik</p>

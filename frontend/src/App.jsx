@@ -14,6 +14,7 @@ import DoctorList from './components/doctors/DoctorList';
 import ExaminationList from './components/examinations/ExaminationList';
 import ExaminationDetail from './components/examinations/ExaminationDetail';
 import ExaminationForm from './components/examinations/ExaminationForm';
+import ExaminationHistory from './components/examinations/ExaminationHistory';
 import ExaminationRequestForm from './components/patients/ExaminationRequestForm';
 import MedicationList from './components/medications/MedicationList';
 import PrescriptionList from './components/prescriptions/PrescriptionList';
@@ -27,6 +28,7 @@ import NursePage from './components/roles/NursePage';
 import PatientPage from './components/roles/PatientPage';
 import PatientRegistrationForm from './components/registrations/PatientRegistrationForm';
 import PatientLogin from './components/auth/PatientLogin';
+import SimplePatientRegistration from './components/auth/SimplePatientRegistration';
 import NurseList from './components/nurses/NurseList';
 import NurseForm from './components/nurses/NurseForm';
 import VitalSignsCheck from './components/nurses/VitalSignsCheck';
@@ -38,10 +40,18 @@ import MedicineDispensingHistory from './components/pharmacists/MedicineDispensi
 import MedicationManagement from './components/pharmacists/MedicationManagement';
 import StockReport from './components/pharmacists/StockReport';
 import ExaminationIntegration from './components/pharmacists/ExaminationIntegration';
+import ProcessPayment from './components/pharmacists/ProcessPayment'; // Import baru
 // Import komponen-komponen EMR
 import EMRPasien from './components/emr/EMRPasien';
 import EMRDokter from './components/emr/EMRDokter';
 import MedicationDoctorMapping from './components/patients/MedicationDoctorMapping';
+
+// Import komponen riwayat pemeriksaan dokter
+import DoctorExaminationHistory from './components/examinations/DoctorExaminationHistory';
+
+// Import komponen-komponen pembayaran
+import PaymentMethodManagement from './components/payments/PaymentMethodManagement';
+import PaymentProcessing from './components/payments/PaymentProcessing';
 
 // Import komponen-komponen laporan
 import ReportDashboard from './components/reports/ReportDashboard';
@@ -83,6 +93,7 @@ function App() {
             <Route path="/login/roles" element={<RoleSelection />} />
             <Route path="/login/:role" element={<RoleBasedLogin />} />
             <Route path="/patient-registration" element={<PatientRegistrationForm />} />
+            <Route path="/patient-register" element={<SimplePatientRegistration />} />
             <Route path="/patient-login" element={<PatientLogin />} />
             <Route path="/logout" element={<Logout />} />
 
@@ -120,12 +131,14 @@ function App() {
             <Route path="/nurses/vital-signs-check" element={<ProtectedRoute allowedRoles={['perawat']}><Layout><VitalSignsCheck /></Layout></ProtectedRoute>} />
             <Route path="/nurses/vital-signs-check/:patientId" element={<ProtectedRoute allowedRoles={['perawat']}><Layout><VitalSignsCheck /></Layout></ProtectedRoute>} />
             <Route path="/nurses/vital-signs-checks" element={<ProtectedRoute allowedRoles={['perawat', 'dokter']}><Layout><VitalSignsList /></Layout></ProtectedRoute>} />
-            
+
             {/* Alur Kerja Dokter (Pemeriksaan) */}
             <Route path="/examinations" element={<ProtectedRoute allowedRoles={['dokter', 'perawat']}><Layout><ExaminationList /></Layout></ProtectedRoute>} />
             <Route path="/examinations/:id" element={<ProtectedRoute allowedRoles={['dokter', 'perawat']}><Layout><ExaminationDetail /></Layout></ProtectedRoute>} />
             <Route path="/examinations/new" element={<ProtectedRoute allowedRoles={['dokter']}><Layout><ExaminationForm /></Layout></ProtectedRoute>} />
             <Route path="/examinations/:id/edit" element={<ProtectedRoute allowedRoles={['dokter']}><Layout><ExaminationForm /></Layout></ProtectedRoute>} />
+            <Route path="/examinations/history" element={<ProtectedRoute allowedRoles={['dokter', 'perawat', 'pasien']}><Layout><ExaminationHistory /></Layout></ProtectedRoute>} />
+            <Route path="/examinations/history/doctor" element={<ProtectedRoute allowedRoles={['dokter']}><Layout><DoctorExaminationHistory /></Layout></ProtectedRoute>} />
 
             {/* EMR (Rekam Medis Elektronik) */}
             <Route path="/emr/pasien/:id" element={<ProtectedRoute allowedRoles={['dokter', 'perawat', 'pasien']}><Layout><EMRPasien /></Layout></ProtectedRoute>} />
@@ -143,13 +156,18 @@ function App() {
             <Route path="/prescriptions/history" element={<ProtectedRoute allowedRoles={['apoteker']}><Layout><MedicineDispensingHistory /></Layout></ProtectedRoute>} />
             <Route path="/dispense/:pemeriksaanId" element={<ProtectedRoute allowedRoles={['apoteker']}><Layout><DispensePage /></Layout></ProtectedRoute>} />
             <Route path="/integration/examinations" element={<ProtectedRoute allowedRoles={['apoteker']}><Layout><ExaminationIntegration /></Layout></ProtectedRoute>} />
-            
+            <Route path="/process-payments" element={<ProtectedRoute allowedRoles={['apoteker']}><Layout><ProcessPayment /></Layout></ProtectedRoute>} />
+
             {/* Laporan (Umumnya Admin) */}
-            <Route path="/reports" element={<ProtectedRoute allowedRoles={['admin']}><Layout><ReportDashboard /></Layout></ProtectedRoute>} />
+            <Route path="/reports" element={<ProtectedRoute allowedRoles={['admin', 'dokter', 'perawat', 'apoteker']}><Layout><Reports /></Layout></ProtectedRoute>} />
             <Route path="/reports/financial" element={<ProtectedRoute allowedRoles={['admin']}><Layout><FinancialReport /></Layout></ProtectedRoute>} />
             <Route path="/reports/medicine-usage" element={<ProtectedRoute allowedRoles={['admin', 'apoteker']}><Layout><MedicineUsageReport /></Layout></ProtectedRoute>} />
             <Route path="/reports/monthly-summary" element={<ProtectedRoute allowedRoles={['admin']}><Layout><MonthlyReport /></Layout></ProtectedRoute>} />
             <Route path="/reports/medication-stock" element={<ProtectedRoute allowedRoles={['admin', 'apoteker']}><Layout><StockReport /></Layout></ProtectedRoute>} />
+
+            {/* Manajemen Pembayaran */}
+            <Route path="/payment-methods" element={<ProtectedRoute allowedRoles={['admin', 'apoteker']}><Layout><PaymentMethodManagement /></Layout></ProtectedRoute>} />
+            <Route path="/payment-process/:prescriptionId" element={<ProtectedRoute allowedRoles={['apoteker']}><Layout><PaymentProcessing /></Layout></ProtectedRoute>} />
 
             {/* Rute fallback, arahkan ke halaman utama */}
             <Route path="*" element={<Navigate to="/" replace />} />

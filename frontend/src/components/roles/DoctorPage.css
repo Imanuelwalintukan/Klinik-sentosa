@@ -1,0 +1,212 @@
+/* DoctorPage.css - Gaya khusus untuk halaman dokter */
+.doctor-page {
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  min-height: calc(100vh - 120px);
+}
+
+.doctor-page h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 2rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #1a2a6c, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.doctor-page h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.doctor-page p {
+  color: #7f8c8d;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.doctor-dashboard {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  padding: 30px;
+  margin-bottom: 40px;
+  border: 1px solid #f0f0f0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.doctor-dashboard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+.doctor-dashboard h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  font-size: 1.4rem;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.doctor-dashboard h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+  border-radius: 3px;
+}
+
+.doctor-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.menu-item {
+  background: linear-gradient(135deg, #f8f9fa, #eef2f7);
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eef2f7;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, #3498db, #1a2a6c);
+}
+
+.menu-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.menu-item h4 {
+  margin: 0 0 12px 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.menu-item p {
+  margin: 0 0 20px 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.menu-actions a,
+.menu-actions button {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  margin: 2px 0;
+}
+
+.menu-actions .btn {
+  width: 100%;
+  max-width: 150px;
+  text-align: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3498db, #1a2a6c);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2980b9, #151f42);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  color: white;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(158, 168, 175, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .doctor-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .doctor-page {
+    padding: 15px;
+  }
+  
+  .doctor-dashboard {
+    padding: 20px;
+  }
+  
+  .doctor-menu-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .doctor-page h2 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-actions a,
+  .menu-actions button {
+    max-width: 100%;
+  }
+}

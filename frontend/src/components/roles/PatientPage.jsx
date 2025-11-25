@@ -1,11 +1,13 @@
 // PatientPage.jsx
 import React from 'react';
 import { useAuth } from '../auth/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import DoctorSelection from '../patients/DoctorSelection';
 import './PatientPage.css'; // Tambahkan file CSS untuk styling khusus
 
 const PatientPage = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="patient-page">
@@ -43,7 +45,7 @@ const PatientPage = () => {
             <div className="menu-actions">
               <button
                 className="btn btn-primary"
-                onClick={() => window.location.href = '#/emr/pasien/' + currentUser?.id}
+                onClick={() => navigate(`/emr/pasien/${currentUser?.id}`)}
               >
                 Lihat Riwayat
               </button>
@@ -54,7 +56,9 @@ const PatientPage = () => {
             <h4>Jadwal Pemeriksaan</h4>
             <p>Lihat jadwal pemeriksaan Anda</p>
             <div className="menu-actions">
-              <button className="btn btn-primary">Lihat Jadwal</button>
+              <button className="btn btn-primary" onClick={() => navigate('/examinations')}>
+                Lihat Jadwal
+              </button>
             </div>
           </div>
 
@@ -62,7 +66,9 @@ const PatientPage = () => {
             <h4>Resep Saya</h4>
             <p>Lihat resep yang telah diberikan dokter</p>
             <div className="menu-actions">
-              <button className="btn btn-primary">Lihat Resep</button>
+              <button className="btn btn-primary" onClick={() => navigate(`/prescriptions/${currentUser?.id}`)}>
+                Lihat Resep
+              </button>
             </div>
           </div>
 
@@ -70,7 +76,9 @@ const PatientPage = () => {
             <h4>Profil Saya</h4>
             <p>Lihat dan kelola profil Anda</p>
             <div className="menu-actions">
-              <button className="btn btn-primary">Lihat Profil</button>
+              <button className="btn btn-primary" onClick={() => navigate('/profile')}>
+                Lihat Profil
+              </button>
             </div>
           </div>
 
@@ -80,7 +88,7 @@ const PatientPage = () => {
             <div className="menu-actions">
               <button
                 className="btn btn-primary"
-                onClick={() => window.location.href = '#/examinations'}
+                onClick={() => navigate('/examinations')}
               >
                 Lihat Status
               </button>
@@ -93,7 +101,7 @@ const PatientPage = () => {
             <div className="menu-actions">
               <button
                 className="btn btn-primary"
-                onClick={() => window.location.href = '#/medication-doctor'}
+                onClick={() => navigate('/medication-doctor')}
               >
                 Lihat Daftar
               </button>

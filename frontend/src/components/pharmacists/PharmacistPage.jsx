@@ -29,6 +29,14 @@ const PharmacistPage = () => {
           </div>
 
           <div className="card">
+            <h3>Kasir & Pembayaran</h3>
+            <p>Proses pembayaran resep dari pasien</p>
+            <Link to="/process-payments" className="btn btn-success">
+              Proses Pembayaran
+            </Link>
+          </div>
+
+          <div className="card">
             <h3>Riwayat Dispensing</h3>
             <p>Lihat riwayat pemberian obat kepada pasien</p>
             <Link to="/prescriptions/history" className="btn btn-secondary">

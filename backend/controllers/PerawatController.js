@@ -1,5 +1,6 @@
 // Controller untuk modul perawat
 const perawatModel = require('../models/PerawatModel');
+const db = require('../config/database');
 
 // Mendapatkan semua perawat
 const getAllPerawat = async (req, res) => {
@@ -178,6 +179,32 @@ const getLatestPemeriksaanAwalByPasienId = async (req, res) => {
 const createPemeriksaanAwal = async (req, res) => {
   try {
     const pemeriksaanData = req.body;
+
+    // Validasi bahwa data yang diperlukan tersedia
+    if (!pemeriksaanData.id_pasien || !pemeriksaanData.id_perawat) {
+      return res.status(400).json({
+        success: false,
+        message: 'ID pasien dan ID perawat wajib disediakan'
+      });
+    }
+
+    // Validasi bahwa pasien dan perawat benar-benar ada
+    const pasienCheck = await db.query('SELECT id FROM pasien WHERE id = $1', [pemeriksaanData.id_pasien]);
+    if (pasienCheck.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Pasien tidak ditemukan'
+      });
+    }
+
+    const perawatCheck = await db.query('SELECT id FROM perawat WHERE id = $1', [pemeriksaanData.id_perawat]);
+    if (perawatCheck.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Perawat tidak ditemukan'
+      });
+    }
+
     const newPemeriksaan = await perawatModel.createPemeriksaanAwal(pemeriksaanData);
 
     res.status(201).json({
@@ -185,6 +212,7 @@ const createPemeriksaanAwal = async (req, res) => {
       data: newPemeriksaan
     });
   } catch (error) {
+    console.error('Error creating pemeriksaan awal:', error);
     res.status(500).json({
       success: false,
       message: error.message

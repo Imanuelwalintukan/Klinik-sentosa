@@ -1,0 +1,101 @@
+{"timestamp":"2025-11-25T01:23:15.722Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:23:15.724Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:23:15.760Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:23:15.763Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:32:27.691Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:32:27.693Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:32:27.731Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:32:27.733Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:40:54.014Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:40:54.022Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:40:54.179Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:40:54.181Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:53:38.037Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:53:38.042Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:53:38.106Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:53:38.108Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:53:51.008Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:53:51.011Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T01:53:51.045Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T01:53:51.047Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:05:02.635Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:05:02.641Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:05:02.713Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:05:02.718Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:15:41.807Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:15:41.815Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:15:41.822Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:15:41.830Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:16:16.552Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:16:16.556Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:16:16.566Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:16:16.572Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:16:19.922Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:16:19.927Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:16:19.935Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:16:19.943Z","level":"ERROR","message":"Error getting payment methods","data":{"error":"relasi « metode_pembayaran » tidak ada"}}
+{"timestamp":"2025-11-25T02:27:21.024Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:27:21.127Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:27:21.136Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:27:21.142Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:27:27.032Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:27:27.054Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:27:27.061Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:27:27.068Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:29:22.292Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:29:22.308Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:29:22.313Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:29:22.318Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:29:38.140Z","level":"INFO","message":"Creating new payment","data":{"data":{"id_pemeriksaan":22,"id_metode_pembayaran":"5","jumlah_pembayaran":0,"jumlah_dibayarkan":"10000","jumlah_kembalian":10000,"status_pembayaran":"lunas","keterangan":"Pembayaran untuk resep pasien adriel "},"user":3}}
+{"timestamp":"2025-11-25T02:37:05.896Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:37:05.918Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:37:05.927Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:37:05.932Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:37:49.048Z","level":"INFO","message":"Creating new payment","data":{"data":{"id_pemeriksaan":22,"id_metode_pembayaran":"5","jumlah_pembayaran":0,"jumlah_dibayarkan":"12000","jumlah_kembalian":12000,"status_pembayaran":"lunas","keterangan":"Pembayaran untuk resep pasien adriel "},"user":3}}
+{"timestamp":"2025-11-25T02:48:42.120Z","level":"INFO","message":"Creating new payment","data":{"data":{"id_pemeriksaan":22,"id_metode_pembayaran":"5","jumlah_pembayaran":0,"jumlah_dibayarkan":"12000","jumlah_kembalian":12000,"status_pembayaran":"lunas","keterangan":"Pembayaran untuk resep pasien adriel "},"user":3}}
+{"timestamp":"2025-11-25T02:48:46.145Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:48:46.167Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:48:46.176Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:48:46.194Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:50:44.890Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:50:44.908Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:50:44.914Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:50:44.922Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:50:55.973Z","level":"INFO","message":"Creating new payment","data":{"data":{"id_pemeriksaan":22,"id_metode_pembayaran":"5","jumlah_pembayaran":0,"jumlah_dibayarkan":"12000","jumlah_kembalian":12000,"status_pembayaran":"lunas","keterangan":"Pembayaran untuk resep pasien adriel "},"user":3}}
+{"timestamp":"2025-11-25T02:50:56.019Z","level":"INFO","message":"Payment created successfully","data":{"id":1}}
+{"timestamp":"2025-11-25T02:52:09.342Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:52:09.357Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:52:09.365Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:52:09.371Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:52:12.478Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:52:12.495Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:52:12.502Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:52:12.509Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:55:28.145Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:55:28.163Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:55:28.168Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:55:28.173Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:59:07.401Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:59:07.418Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:59:07.424Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:59:07.441Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:59:10.990Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:59:11.000Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T02:59:11.007Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T02:59:11.013Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T03:00:52.930Z","level":"INFO","message":"Creating new payment","data":{"data":{"id_pemeriksaan":22,"id_metode_pembayaran":6,"jumlah_pembayaran":0,"jumlah_dibayarkan":"10000","jumlah_kembalian":10000,"status_pembayaran":"lunas","keterangan":"Pembayaran untuk resep pasien adriel "},"user":3}}
+{"timestamp":"2025-11-25T03:00:52.941Z","level":"INFO","message":"Payment created successfully","data":{"id":2}}
+{"timestamp":"2025-11-25T03:01:39.539Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T03:01:39.555Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T03:01:39.561Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T03:01:39.572Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T04:01:34.728Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T04:01:34.753Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T04:01:34.759Z","level":"INFO","message":"Getting all payment methods","data":{"user":3,"role":"apoteker"}}
+{"timestamp":"2025-11-25T04:01:34.775Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T04:02:06.789Z","level":"INFO","message":"Creating new payment","data":{"data":{"id_pemeriksaan":23,"id_metode_pembayaran":"5","jumlah_pembayaran":0,"jumlah_dibayarkan":"100000","jumlah_kembalian":100000,"status_pembayaran":"lunas","keterangan":"Pembayaran untuk resep pasien john"},"user":3}}
+{"timestamp":"2025-11-25T04:02:06.811Z","level":"INFO","message":"Payment created successfully","data":{"id":3}}
+{"timestamp":"2025-11-25T04:04:37.285Z","level":"INFO","message":"Getting all payment methods","data":{"user":1,"role":"admin"}}
+{"timestamp":"2025-11-25T04:04:37.306Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}
+{"timestamp":"2025-11-25T04:04:37.311Z","level":"INFO","message":"Getting all payment methods","data":{"user":1,"role":"admin"}}
+{"timestamp":"2025-11-25T04:04:37.318Z","level":"INFO","message":"Payment methods retrieved successfully","data":{"count":6}}

@@ -10,6 +10,9 @@ router.get('/', protect, authorize('dokter', 'perawat', 'admin'), pasienControll
 // Mendapatkan pasien berdasarkan ID - Staf klinis dan admin
 router.get('/:id', protect, authorize('dokter', 'perawat', 'admin'), pasienController.getPasienById);
 
+// Mendapatkan pasien berdasarkan ID user - Untuk pasien atau staf yang terkait
+router.get('/user/:userId', protect, authorize('pasien', 'dokter', 'perawat', 'admin'), pasienController.getPasienByUserId);
+
 // Membuat pasien baru - Dokter, Perawat, atau Admin
 router.post('/', protect, authorize('dokter', 'perawat', 'admin'), pasienController.createPasien);
 

@@ -1,45 +1,51 @@
-// Reports.jsx
 import React, { useState, useEffect } from 'react';
 import axios from '../../axiosConfig';
-import { useAuth } from '../auth/AuthProvider'; // Import useAuth
+import { useAuth } from '../auth/AuthProvider';
+import './Reports.css';
 
 const Reports = () => {
+  const { isAuthenticated } = useAuth();
   const [reportType, setReportType] = useState('summary');
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { isAuthenticated } = useAuth(); // Dapatkan status autentikasi
 
-  // Fungsi untuk mengambil data laporan berdasarkan jenis laporan
+  useEffect(() => {
+    if (isAuthenticated && reportType) {
+      fetchReportData();
+    }
+  }, [reportType, isAuthenticated]);
+
   const fetchReportData = async () => {
     setLoading(true);
     setError(null);
 
     try {
       let response;
-      
       switch(reportType) {
         case 'summary':
-          // Laporan ringkasan: jumlah pasien, dokter, pemeriksaan, dll
           response = await axios.get('/reports/summary');
           break;
         case 'monthly':
-          // Laporan bulanan: pemeriksaan per bulan
           response = await axios.get('/reports/monthly');
           break;
-        case 'patient-history':
-          // Riwayat pemeriksaan pasien
-          response = await axios.get('/reports/patient-history');
-          break;
         case 'medication-stock':
-          // Laporan stok obat
           response = await axios.get('/reports/medication-stock');
           break;
+        case 'patient-history':
+          response = await axios.get('/reports/patient-history');
+          break;
         default:
-          throw new Error('Jenis laporan tidak valid');
+          setError('Jenis laporan tidak dikenal');
+          setLoading(false);
+          return;
       }
-      
-      setReportData(response.data);
+
+      if (response.data.success) {
+        setReportData(response.data.data);
+      } else {
+        setError(response.data.message || 'Gagal mengambil data laporan');
+      }
     } catch (err) {
       setError('Gagal mengambil data laporan: ' + (err.response?.data?.message || err.message));
     } finally {
@@ -47,160 +53,233 @@ const Reports = () => {
     }
   };
 
-  useEffect(() => {
-    if (isAuthenticated) { // Hanya fetch jika sudah terautentikasi
-      fetchReportData();
-    }
-  }, [reportType, isAuthenticated]);
+  const renderReport = () => {
+    if (loading) return <div className="loading">Memuat laporan...</div>;
+    if (error) return <div className="error">{error}</div>;
 
-  const reportTypes = [
-    { id: 'summary', name: 'Ringkasan Umum' },
-    { id: 'monthly', name: 'Laporan Bulanan' },
-    { id: 'patient-history', name: 'Riwayat Pemeriksaan Pasien' },
-    { id: 'medication-stock', name: 'Stok Obat' }
-  ];
+    switch(reportType) {
+      case 'summary':
+        return <SummaryReport data={reportData} />;
+      case 'monthly':
+        return <MonthlyReport data={reportData} />;
+      case 'medication-stock':
+        return <MedicationStockReport data={reportData} />;
+      case 'patient-history':
+        return <PatientHistoryReport data={reportData} />;
+      default:
+        return <div>Format laporan tidak dikenal</div>;
+    }
+  };
 
   return (
-    <div className="reports-page">
-      <h2>Sistem Laporan Klinik</h2>
+    <div className="reports">
+      <h2>Laporan Klinik</h2>
       
       <div className="report-controls">
-        <div className="form-group">
-          <label htmlFor="reportType">Jenis Laporan:</label>
-          <select
-            id="reportType"
-            value={reportType}
-            onChange={(e) => setReportType(e.target.value)}
-            className="form-control"
-          >
-            {reportTypes.map(type => (
-              <option key={type.id} value={type.id}>{type.name}</option>
-            ))}
-          </select>
-        </div>
+        <label htmlFor="report-type">Pilih Laporan:</label>
+        <select 
+          id="report-type"
+          value={reportType} 
+          onChange={(e) => setReportType(e.target.value)}
+          className="report-type-select"
+        >
+          <option value="summary">Laporan Ringkasan</option>
+          <option value="monthly">Laporan Bulanan</option>
+          <option value="medication-stock">Stok Obat</option>
+          <option value="patient-history">Riwayat Pasien</option>
+        </select>
+        
+        <button className="btn btn-primary" onClick={fetchReportData} disabled={loading}>
+          {loading ? 'Memuat...' : 'Muat Ulang'}
+        </button>
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
-      
-      {loading ? (
-        <div className="loading">Memuat laporan...</div>
-      ) : reportData ? (
-        <div className="report-content">
-          <div className="report-header">
-            <h3>{reportTypes.find(t => t.id === reportType)?.name}</h3>
-            <button className="btn btn-success" onClick={() => window.print()}>
-              Cetak Laporan
-            </button>
-          </div>
-          
-          {reportType === 'summary' && (
-            <div className="summary-report">
-              <div className="summary-grid">
-                <div className="summary-card">
-                  <h4>Total Pasien</h4>
-                  <p className="summary-number">{reportData.totalPatients || 0}</p>
-                </div>
-                
-                <div className="summary-card">
-                  <h4>Total Dokter</h4>
-                  <p className="summary-number">{reportData.totalDoctors || 0}</p>
-                </div>
-                
-                <div className="summary-card">
-                  <h4>Total Pemeriksaan</h4>
-                  <p className="summary-number">{reportData.totalExaminations || 0}</p>
-                </div>
-                
-                <div className="summary-card">
-                  <h4>Total Obat</h4>
-                  <p className="summary-number">{reportData.totalMedications || 0}</p>
-                </div>
-              </div>
-              
-              <div className="chart-section">
-                <h4>Grafik Pemeriksaan Bulanan</h4>
-                <div className="chart-placeholder">
-                  {/* Di sini akan ditampilkan grafik pemeriksaan bulanan */}
-                  <p>Grafik akan ditampilkan di sini</p>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {reportType === 'monthly' && (
-            <div className="monthly-report">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Bulan</th>
-                    <th>Jumlah Pemeriksaan</th>
-                    <th>Pendapatan</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reportData.monthlyData?.map((month, index) => (
-                    <tr key={index}>
-                      <td>{month.month}</td>
-                      <td>{month.examinationCount}</td>
-                      <td>Rp {month.revenue?.toLocaleString() || 0}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          
-          {reportType === 'medication-stock' && (
-            <div className="medication-stock-report">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Nama Obat</th>
-                    <th>Stok Tersedia</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reportData.stockData?.map((medication, index) => (
-                    <tr key={index}>
-                      <td>{medication.nama_obat}</td>
-                      <td>{medication.stok}</td>
-                      <td>
-                        <span className={`status-badge ${medication.stok < 10 ? 'status-low' : 'status-good'}`}>
-                          {medication.stok < 10 ? 'Stok Rendah' : 'Stok Aman'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          
-          {reportType === 'patient-history' && (
-            <div className="patient-history-report">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>ID Pasien</th>
-                    <th>Nama Pasien</th>
-                    <th>Jumlah Pemeriksaan</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reportData.patientHistory?.map((patient, index) => (
-                    <tr key={index}>
-                      <td>{patient.id_pasien}</td>
-                      <td>{patient.nama_pasien}</td>
-                      <td>{patient.examinationCount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+      <div className="report-content">
+        {renderReport()}
+      </div>
+    </div>
+  );
+};
+
+// Komponen untuk laporan ringkasan
+const SummaryReport = ({ data }) => {
+  if (!data) return <div>Data tidak tersedia</div>;
+
+  return (
+    <div className="summary-report">
+      <h3>Laporan Ringkasan Klinik</h3>
+      <div className="summary-stats">
+        <div className="stat-card">
+          <h4>{data.totalPatients || 0}</h4>
+          <p>Total Pasien</p>
         </div>
-      ) : null}
+        <div className="stat-card">
+          <h4>{data.totalDoctors || 0}</h4>
+          <p>Total Dokter</p>
+        </div>
+        <div className="stat-card">
+          <h4>{data.totalExaminations || 0}</h4>
+          <p>Total Pemeriksaan</p>
+        </div>
+        <div className="stat-card">
+          <h4>{data.totalMedications || 0}</h4>
+          <p>Total Obat</p>
+        </div>
+      </div>
+      
+      {data.monthlyData && data.monthlyData.length > 0 && (
+        <div className="monthly-trend">
+          <h4>Tren Bulanan</h4>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Bulan</th>
+                <th>Jumlah Pemeriksaan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.monthlyData.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.month}</td>
+                  <td>{item.examinationCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Komponen untuk laporan bulanan
+const MonthlyReport = ({ data }) => {
+  if (!data || !data.monthlyData) return <div>Data tidak tersedia</div>;
+
+  return (
+    <div className="monthly-report">
+      <h3>Laporan Bulanan Pemeriksaan</h3>
+      {data.monthlyData.length > 0 ? (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Bulan</th>
+              <th>Jumlah Pemeriksaan</th>
+              <th>Tren</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.monthlyData.map((item, index) => (
+              <tr key={index}>
+                <td>{item.month}</td>
+                <td>{item.examinationCount}</td>
+                <td>
+                  {index > 0 ? (
+                    <span className={
+                      item.examinationCount > data.monthlyData[index-1].examinationCount 
+                        ? 'trend-up' 
+                        : 'trend-down'
+                    }>
+                      {item.examinationCount > data.monthlyData[index-1].examinationCount ? '↑' : '↓'}
+                    </span>
+                  ) : '-'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>Tidak ada data bulanan tersedia</p>
+      )}
+    </div>
+  );
+};
+
+// Komponen untuk laporan stok obat
+const MedicationStockReport = ({ data }) => {
+  if (!data || !data.stockData) return <div>Data tidak tersedia</div>;
+
+  const lowStockMedications = data.stockData.filter(med => med.stok < 10);
+  const normalStockMedications = data.stockData.filter(med => med.stok >= 10);
+
+  return (
+    <div className="medication-stock-report">
+      <h3>Laporan Stok Obat</h3>
+      
+      {lowStockMedications.length > 0 && (
+        <div className="low-stock-section">
+          <h4>Obat Stok Rendah (Kurang dari 10)</h4>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nama Obat</th>
+                <th>Stok</th>
+                <th>Harga</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lowStockMedications.map((med, index) => (
+                <tr key={med.id} className="low-stock-row">
+                  <td>{med.nama_obat}</td>
+                  <td><span className="low-stock-badge">{med.stok}</span></td>
+                  <td>Rp {med.harga?.toLocaleString('id-ID') || '0'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="normal-stock-section">
+        <h4>Obat dengan Stok Normal</h4>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Nama Obat</th>
+              <th>Stok</th>
+              <th>Harga</th>
+            </tr>
+          </thead>
+          <tbody>
+            {normalStockMedications.map((med, index) => (
+              <tr key={med.id}>
+                <td>{med.nama_obat}</td>
+                <td>{med.stok}</td>
+                <td>Rp {med.harga?.toLocaleString('id-ID') || '0'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// Komponen untuk laporan riwayat pasien
+const PatientHistoryReport = ({ data }) => {
+  if (!data || !data.patientHistory) return <div>Data tidak tersedia</div>;
+
+  return (
+    <div className="patient-history-report">
+      <h3>Riwayat Pemeriksaan Pasien</h3>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>ID Pasien</th>
+            <th>Nama Pasien</th>
+            <th>Jumlah Pemeriksaan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.patientHistory.map((patient, index) => (
+            <tr key={patient.id_pasien}>
+              <td>{patient.id_pasien}</td>
+              <td>{patient.nama_pasien}</td>
+              <td>{patient.examination_count}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

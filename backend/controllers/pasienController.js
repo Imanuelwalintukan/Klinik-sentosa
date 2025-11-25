@@ -151,6 +151,39 @@ exports.deletePasien = async (req, res) => {
   }
 };
 
+// Mendapatkan pasien berdasarkan ID user
+exports.getPasienByUserId = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const query = `
+      SELECT id, nama, nomor_telepon, alamat, to_char(tanggal_lahir, 'YYYY-MM-DD') as tanggal_lahir, jenis_kelamin, nomor_bpjs
+      FROM pasien
+      WHERE id_user = $1
+    `;
+    const { rows } = await db.query(query, [userId]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Pasien terkait dengan user ini tidak ditemukan.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Data pasien berhasil ditemukan.',
+      data: rows[0],
+    });
+  } catch (error) {
+    console.error(`Error getting pasien by user ID ${userId}:`, error);
+    res.status(500).json({
+      success: false,
+      message: 'Gagal mengambil data pasien. Terjadi kesalahan server.',
+      error: error.message,
+    });
+  }
+};
+
 // Mendaftarkan pasien baru (dari form registrasi publik)
 exports.registerPasien = async (req, res) => {
   const { nama, nomor_telepon, alamat, tanggal_lahir, jenis_kelamin, nomor_bpjs } = req.body;

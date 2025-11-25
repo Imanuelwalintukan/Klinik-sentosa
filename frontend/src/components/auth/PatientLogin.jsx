@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
-import axios from '../../axiosConfig'; // Import axios yang sudah dikonfigurasi
+import patientAxios from './patientAxios'; // Import axios khusus untuk pasien
 
 const PatientLogin = () => {
   const [credentials, setCredentials] = useState({
@@ -29,8 +29,27 @@ const PatientLogin = () => {
     setError('');
 
     try {
-      // Panggil API untuk login pasien
-      const response = await axios.post('/auth/login/pasien', credentials);
+      // Hanya kirim field yang tidak kosong
+      const loginData = {};
+      if (credentials.nomor_telepon.trim()) {
+        loginData.nomor_telepon = credentials.nomor_telepon.trim();
+      }
+      if (credentials.nomor_bpjs.trim()) {
+        loginData.nomor_bpjs = credentials.nomor_bpjs.trim();
+      }
+
+      // Validasi: setidaknya satu field harus diisi
+      if (!loginData.nomor_telepon && !loginData.nomor_bpjs) {
+        setError('Mohon masukkan nomor telepon atau nomor BPJS.');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Mengirim data login:', loginData);
+      // Panggil API untuk login pasien menggunakan patientAxios
+      // Karena baseURL sekarang adalah 'http://localhost:3000', kita tambahkan '/api' ke endpoint
+      const response = await patientAxios.post('/api/auth/login/pasien', loginData);
+      console.log('Response dari server:', response);
 
       if (response.data.success) {
         // Login berhasil
@@ -42,6 +61,11 @@ const PatientLogin = () => {
     } catch (err) {
       setError('Terjadi kesalahan saat login. Silakan coba lagi.');
       console.error('Login error:', err);
+      console.error('Error response:', err.response);
+      if (err.response) {
+        console.error('Status:', err.response.status);
+        console.error('Data:', err.response.data);
+      }
     } finally {
       setLoading(false);
     }
@@ -91,7 +115,7 @@ const PatientLogin = () => {
         </form>
 
         <div className="login-actions">
-          <p>Belum terdaftar? <a href="/register">Daftar di sini</a></p>
+          <p>Belum terdaftar? <a href="/patient-registration">Daftar di sini</a></p>
         </div>
       </div>
     </div>

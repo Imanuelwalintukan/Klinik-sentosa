@@ -10,7 +10,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -30,10 +30,10 @@ const Login = () => {
     try {
       // Panggil API login yang sesungguhnya
       const response = await axios.post('/auth/login', credentials);
-      
+
       if (response.data.success) {
         login(response.data.data); // Data sudah termasuk token
-        
+
         // Redirect berdasarkan role yang diterima dari backend
         switch (response.data.data.role) {
           case 'admin':
@@ -105,6 +105,7 @@ const Login = () => {
         <div className="login-actions">
           <a href="/login/roles">Login sebagai role lain</a>
           <a href="/patient-login">Login sebagai Pasien</a>
+          <a href="/patient-register">Daftar sebagai Pasien</a>
         </div>
       </div>
     </div>

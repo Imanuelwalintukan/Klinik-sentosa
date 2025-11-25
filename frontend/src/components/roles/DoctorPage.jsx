@@ -1,15 +1,22 @@
 // DoctorPage.jsx
 import React from 'react';
 import { useAuth } from '../auth/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+import './DoctorPage.css'; // Import CSS khusus untuk halaman dokter
 
 const DoctorPage = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleViewHistory = () => {
+    navigate('/examinations/history/doctor');
+  };
 
   return (
     <div className="doctor-page">
       <h2>Selamat Datang, {currentUser?.name}!</h2>
       <p>Anda masuk sebagai Dokter. Anda dapat melakukan pemeriksaan dan membuat resep untuk pasien.</p>
-      
+
       <div className="doctor-dashboard">
         <h3>Menu Dokter</h3>
         <div className="doctor-menu-grid">
@@ -20,7 +27,7 @@ const DoctorPage = () => {
               <a href="/patients" className="btn btn-primary">Lihat Daftar</a>
             </div>
           </div>
-          
+
           <div className="menu-item">
             <h4>Manajemen Pemeriksaan</h4>
             <p>Lakukan pemeriksaan dan tambah data pemeriksaan</p>
@@ -38,7 +45,7 @@ const DoctorPage = () => {
 
             </div>
           </div>
-          
+
           <div className="menu-item">
             <h4>Manajemen Resep</h4>
             <p>Buat dan kelola resep untuk pasien</p>
@@ -47,12 +54,12 @@ const DoctorPage = () => {
               <a href="/prescriptions/new" className="btn btn-secondary">Buat Resep</a>
             </div>
           </div>
-          
+
           <div className="menu-item">
             <h4>Riwayat Pemeriksaan Saya</h4>
             <p>Lihat pemeriksaan yang telah Anda lakukan</p>
             <div className="menu-actions">
-              <button className="btn btn-primary">Lihat Riwayat</button>
+              <button className="btn btn-primary" onClick={handleViewHistory}>Lihat Riwayat</button>
             </div>
           </div>
         </div>

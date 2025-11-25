@@ -42,7 +42,7 @@ const Layout = ({ children }) => {
         { path: '/nurses/vital-signs-checks', label: 'Riwayat P. Awal', icon: 'icon-history' }
       );
     }
-    
+
     // Menu untuk Dokter
     if (role === 'dokter') {
       menu.push(
@@ -83,7 +83,7 @@ const Layout = ({ children }) => {
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h2>Klinik Sentosa</h2>
-          <button className="close-btn" onClick={toggleSidebar}>
+          <button className="close-btn" onClick={() => setSidebarOpen(false)}>
             &times;
           </button>
         </div>

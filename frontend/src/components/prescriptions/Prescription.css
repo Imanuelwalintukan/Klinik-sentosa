@@ -303,4 +303,48 @@
   .btn-lg {
     padding: 10px 20px;
     font-size: 1.1rem;
-  }}
+  }
+}
+
+/* Total section styling */
+.total-section {
+  margin-top: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  text-align: right;
+}
+
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ced4da;
+}
+
+.total-line:last-child {
+  border-bottom: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.total-amount {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #e74c3c;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.status-available {
+  background-color: #2ecc71 !important;
+  color: white;
+}
+
+.status-unavailable {
+  background-color: #e74c3c !important;
+  color: white;
+}
