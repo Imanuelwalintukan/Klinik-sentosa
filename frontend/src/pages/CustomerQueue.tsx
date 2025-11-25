@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Clock, User, Calendar, RefreshCw, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCustomerQueue } from '../services/api';
-import type { CustomerQueue as CustomerQueueType } from '../types';
+import type { CustomerQueue as CustomerQueueType } from '../types/index';
 
 export const CustomerQueue: React.FC = () => {
     const [queueData, setQueueData] = useState<CustomerQueueType | null>(null);
@@ -186,3 +186,4 @@ export const CustomerQueue: React.FC = () => {
         </div>
     );
 };
+

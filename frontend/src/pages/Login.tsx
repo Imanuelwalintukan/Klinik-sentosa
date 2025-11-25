@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
             className="min-h-screen bg-bg-dark text-text-white flex items-center justify-center p-4 relative overflow-hidden"
         >
             {/* Liquid glass backdrop behind login card for subtle effect, allowing AnimatedBackground to show */}
-            <div className="absolute inset-0 bg-transparent backdrop-blur-xl z-0"></div> 
+            <div className="absolute inset-0 bg-transparent backdrop-blur-xl z-0"></div>
 
             <motion.div
                 variants={fadeIn}
@@ -102,9 +102,24 @@ export const Login: React.FC = () => {
                         <p>Doctor: <span className="text-accent-cyan">strange@klinik.com</span> / <span className="text-primary-light">password123</span></p>
                         <p>Pharmacist: <span className="text-accent-cyan">pharmacist@klinik.com</span> / <span className="text-primary-light">password123</span></p>
                         <p>Staff: <span className="text-accent-cyan">alice@klinik.com</span> / <span className="text-primary-light">password123</span></p>
+                        <p>Customer: <span className="text-accent-cyan">customer1@example.com</span> / <span className="text-primary-light">password123</span></p>
+                        <p>Customer: <span className="text-accent-cyan">dia@customer.com</span> / <span className="text-primary-light">password123</span></p>
                     </div>
                 </div>
+
+                {/* Account Request Notice */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="mt-4 text-center"
+                >
+                    <p className="text-text-muted text-sm">
+                        If you need an account, please contact the administrator.
+                    </p>
+                </motion.div>
             </motion.div>
         </div>
     );
 };
+

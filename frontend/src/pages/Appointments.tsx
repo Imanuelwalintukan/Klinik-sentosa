@@ -9,7 +9,7 @@ import { Card } from '../components/ui/Card';
 
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import type { Appointment } from '../types';
+import type { Appointment } from '../types/index';
 
 export const Appointments: React.FC = () => {
     const navigate = useNavigate();
@@ -117,3 +117,4 @@ export const Appointments: React.FC = () => {
         </div>
     );
 };
+

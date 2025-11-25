@@ -10,7 +10,7 @@ import { Select } from '../components/ui/Select';
 import { Card } from '../components/ui/Card';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import type { MedicalRecord, Drug } from '../types';
+import type { MedicalRecord, Drug } from '../types/index';
 
 export const Prescription: React.FC = () => {
     const { medicalRecordId } = useParams();
@@ -162,3 +162,4 @@ export const Prescription: React.FC = () => {
         </div>
     );
 };
+

@@ -8,7 +8,7 @@ import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import type { Drug } from '../types';
+import type { Drug } from '../types/index';
 
 export const Inventory: React.FC = () => {
     const [drugs, setDrugs] = useState<Drug[]>([]);

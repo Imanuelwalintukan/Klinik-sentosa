@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Calendar, User, Clock, FileText, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCustomerAppointments } from '../services/api';
-import type { Appointment } from '../types';
+import type { Appointment } from '../types/index';
 
 export const CustomerAppointments: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -185,3 +185,4 @@ export const CustomerAppointments: React.FC = () => {
         </div>
     );
 };
+

@@ -13,6 +13,10 @@ export const login = async (email: string, password: string, ipAddress: string, 
         throw new Error('Invalid email or password');
     }
 
+    if (!user.isActive) {
+        throw new Error('Account is inactive. Please contact support.');
+    }
+
     const isMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!isMatch) {

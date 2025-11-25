@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { CreditCard, Calendar, Download, DollarSign, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCustomerPayments } from '../services/api';
-import type { Payment } from '../types';
+import type { Payment } from '../types/index';
 
 export const CustomerPayments: React.FC = () => {
     const [payments, setPayments] = useState<Payment[]>([]);
@@ -188,3 +188,4 @@ export const CustomerPayments: React.FC = () => {
         </div>
     );
 };
+

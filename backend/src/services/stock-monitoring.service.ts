@@ -4,20 +4,14 @@ const prisma = new PrismaClient();
 
 // Get low stock drugs
 export const getLowStockDrugs = async () => {
-    return prisma.drug.findMany({
-        where: {
-            deletedAt: null,
-            AND: [
-                { minStock: { not: null } },
-                {
-                    stockQty: {
-                        lte: prisma.drug.fields.minStock,
-                    },
-                },
-            ],
-        },
-        orderBy: { stockQty: 'asc' },
-    });
+    // Use raw query since Prisma doesn't support column-to-column comparison directly
+    return prisma.$queryRaw`
+        SELECT * FROM "Drug"
+        WHERE "deletedAt" IS NULL
+        AND "minStock" IS NOT NULL
+        AND "stockQty" <= "minStock"
+        ORDER BY "stockQty" ASC
+    `;
 };
 
 // Get expiring drugs (within specified days)
@@ -80,7 +74,7 @@ export const logStockChange = async (
 // Get stock summary
 export const getStockSummary = async () => {
     const totalDrugs = await prisma.drug.count({ where: { deletedAt: null } });
-    const lowStockDrugs = await getLowStockDrugs();
+    const lowStockDrugs = await getLowStockDrugs() as any[]; // Type assertion for raw query
     const expiringDrugs = await getExpiringDrugs(30);
 
     const totalValue = await prisma.drug.aggregate({

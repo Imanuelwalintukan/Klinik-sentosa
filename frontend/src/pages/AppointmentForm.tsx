@@ -12,7 +12,7 @@ import { Textarea } from '../components/ui/Textarea';
 import { Card } from '../components/ui/Card';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import type { Patient, Doctor } from '../types';
+import type { Patient, Doctor } from '../types/index';
 
 const appointmentSchema = z.object({
     patientId: z.number().min(1, 'Patient is required'),
@@ -124,3 +124,4 @@ export const AppointmentForm: React.FC = () => {
         </div>
     );
 };
+

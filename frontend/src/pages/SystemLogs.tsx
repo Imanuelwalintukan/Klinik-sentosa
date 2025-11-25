@@ -6,7 +6,7 @@ import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
 import toast from 'react-hot-toast';
 import { getAllActivityLogs } from '../services/api';
-import type { ActivityLog } from '../types';
+import type { ActivityLog } from '../types/index';
 
 export const SystemLogs: React.FC = () => {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
@@ -148,3 +148,4 @@ export const SystemLogs: React.FC = () => {
 };
 
 export default SystemLogs;
+

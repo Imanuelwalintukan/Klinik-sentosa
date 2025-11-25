@@ -13,6 +13,7 @@ exports.loginController = void 0;
 const auth_service_1 = require("../services/auth.service");
 const response_1 = require("../utils/response");
 const auth_validation_1 = require("../validation/auth.validation");
+const activity_log_service_1 = require("../services/activity-log.service");
 const loginController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validation = auth_validation_1.loginSchema.safeParse(req.body);
@@ -20,7 +21,11 @@ const loginController = (req, res) => __awaiter(void 0, void 0, void 0, function
             return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
         const { email, password } = validation.data;
-        const result = yield (0, auth_service_1.login)(email, password);
+        const ipAddress = req.ip || '127.0.0.1'; // Fallback for req.ip
+        const userAgent = req.headers['user-agent'] || 'Unknown';
+        const result = yield (0, auth_service_1.login)(email, password, ipAddress, userAgent);
+        // Log activity for successful login
+        yield (0, activity_log_service_1.logActivity)(req, 'LOGIN', 'USER', result.user.id, null, result.user);
         (0, response_1.sendResponse)(res, 200, true, result);
     }
     catch (error) {

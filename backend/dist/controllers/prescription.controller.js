@@ -42,7 +42,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPrescription = exports.getPrescriptions = exports.createPrescription = void 0;
+exports.updatePrescriptionStatus = exports.getPrescription = exports.getPrescriptions = exports.createPrescription = void 0;
 const prescriptionService = __importStar(require("../services/prescription.service"));
 const response_1 = require("../utils/response");
 const prescription_validation_1 = require("../validation/prescription.validation");
@@ -52,33 +52,9 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (!validation.success) {
             return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        // Assuming the user is a doctor and has a doctor profile linked
-        // We need to find the doctor ID from the user ID
-        // For simplicity, let's assume we can get doctorId from the user context or query
-        // But wait, the schema says Prescription has doctorId (relation to Doctor).
-        // AuthRequest has user.id (User model).
-        // We need to fetch the Doctor model for this User.
-        // Ideally we should do this in the service or middleware, but let's do it here or assume the service handles it if we pass userId.
-        // But the service expects doctorId.
-        // Let's fetch doctorId here.
-        // Actually, I can't import PrismaClient here easily without duplicating.
-        // Let's modify the service to accept userId and find the doctor.
-        // Wait, I'll just pass a placeholder or fetch it.
-        // Let's assume the user is a doctor.
-        // I'll update the service to take userId and find the doctor.
-        // For now, I'll just pass the user.id and let the service fail if it's not a doctor? 
-        // No, User.id != Doctor.id. Doctor has userId.
-        // I will update the service to handle this lookup.
-        // But I already wrote the service to take doctorId.
-        // I'll update the service in the next step or just do a quick lookup here if I had prisma.
-        // I'll stick to the plan: Update service to find doctor by userId.
-        // But I can't edit the service in the same turn easily if I just wrote it.
-        // Actually I can overwrite it.
-        // Let's assume I'll fix it. For now, I'll pass user.id and note the bug or fix it in service.
-        // I'll overwrite the service file in this same turn.
         if (!req.user)
             return (0, response_1.sendResponse)(res, 401, false, null, 'Unauthorized');
-        const prescription = yield prescriptionService.createPrescription(validation.data, req.user.id); // Passing userId, service needs update
+        const prescription = yield prescriptionService.createPrescription(validation.data, req);
         (0, response_1.sendResponse)(res, 201, true, prescription);
     }
     catch (error) {
@@ -88,10 +64,11 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.createPrescription = createPrescription;
 const getPrescriptions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const prescriptions = yield prescriptionService.getPrescriptions();
+        const { status } = req.query; // Extract status from query
+        const prescriptions = yield prescriptionService.getPrescriptions(status); // Pass status to service
         (0, response_1.sendResponse)(res, 200, true, prescriptions);
     }
-    catch (error) {
+    catch (error) { // Cast error to any
         (0, response_1.sendResponse)(res, 500, false, null, error.message);
     }
 });
@@ -102,8 +79,24 @@ const getPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function
         const prescription = yield prescriptionService.getPrescriptionById(id);
         (0, response_1.sendResponse)(res, 200, true, prescription);
     }
-    catch (error) {
+    catch (error) { // Cast error to any
         (0, response_1.sendResponse)(res, 404, false, null, error.message);
     }
 });
 exports.getPrescription = getPrescription;
+const updatePrescriptionStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = parseInt(req.params.id);
+        const validation = prescription_validation_1.updatePrescriptionStatusValidation.safeParse(req.body); // Use zod safeParse
+        if (!validation.success) {
+            return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
+        }
+        const { status } = validation.data; // Get data from validation.data
+        const updatedPrescription = yield prescriptionService.updatePrescriptionStatus(id, status, req);
+        (0, response_1.sendResponse)(res, 200, true, updatedPrescription);
+    }
+    catch (error) {
+        (0, response_1.sendResponse)(res, 400, false, null, error.message);
+    }
+});
+exports.updatePrescriptionStatus = updatePrescriptionStatus;

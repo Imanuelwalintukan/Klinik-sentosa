@@ -9,7 +9,7 @@ import { Modal } from '../components/ui/Modal';
 import { Select } from '../components/ui/Select';
 import { getPayments, createPayment, getPrescriptions } from '../services/api'; // Import specific functions, including getPrescriptions
 import toast from 'react-hot-toast';
-import type { Payment, Prescription } from '../types';
+import type { Payment, Prescription } from '../types/index';
 
 export const Payments: React.FC = () => {
     const [payments, setPayments] = useState<Payment[]>([]);
@@ -187,3 +187,4 @@ export const Payments: React.FC = () => {
         </div>
     );
 };
+

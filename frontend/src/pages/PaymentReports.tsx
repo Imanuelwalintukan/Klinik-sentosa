@@ -5,7 +5,7 @@ import { Table, type Column } from '../components/ui/Table';
 import { Input } from '../components/ui/Input';
 import toast from 'react-hot-toast';
 import { getPayments } from '../services/api';
-import type { Payment } from '../types';
+import type { Payment } from '../types/index';
 
 export const PaymentReports: React.FC = () => {
   const [allPayments, setAllPayments] = useState<Payment[]>([]);
@@ -117,3 +117,4 @@ export const PaymentReports: React.FC = () => {
 };
 
 export default PaymentReports;
+

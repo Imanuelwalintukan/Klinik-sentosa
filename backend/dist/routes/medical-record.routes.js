@@ -37,8 +37,11 @@ const express_1 = require("express");
 const medicalRecordController = __importStar(require("../controllers/medical-record.controller"));
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const client_1 = require("@prisma/client");
+const validate_middleware_1 = require("../middleware/validate.middleware"); // Use custom validate
+const medical_record_validation_1 = require("../validation/medical-record.validation");
 const router = (0, express_1.Router)();
 router.use(auth_middleware_1.authenticate);
-router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.DOCTOR]), medicalRecordController.createMedicalRecord);
+router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.DOCTOR]), (0, validate_middleware_1.validate)(medical_record_validation_1.createMedicalRecordSchema), medicalRecordController.createMedicalRecord);
 router.get('/appointment/:appointmentId', medicalRecordController.getMedicalRecord);
+router.put('/appointment/:appointmentId', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.DOCTOR]), (0, validate_middleware_1.validate)(medical_record_validation_1.updateMedicalRecordSchema), medicalRecordController.updateMedicalRecord);
 exports.default = router;

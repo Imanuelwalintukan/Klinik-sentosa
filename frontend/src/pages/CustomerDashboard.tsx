@@ -150,8 +150,8 @@ export const CustomerDashboard: React.FC = () => {
                                     })}</p>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${apt.status === 'COMPLETED' ? 'bg-status-success/20 text-status-success' :
-                                        apt.status === 'CANCELLED' ? 'bg-status-error/20 text-status-error' :
-                                            'bg-status-info/20 text-status-info'
+                                    apt.status === 'CANCELLED' ? 'bg-status-error/20 text-status-error' :
+                                        'bg-status-info/20 text-status-info'
                                     }`}>
                                     {apt.status}
                                 </span>

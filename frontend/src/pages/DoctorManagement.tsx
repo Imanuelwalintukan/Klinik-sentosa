@@ -6,7 +6,7 @@ import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import toast from 'react-hot-toast';
 import { getAllDoctors, createDoctor, updateDoctor, deleteDoctor } from '../services/api';
-import type { Doctor } from '../types';
+import type { Doctor } from '../types/index';
 import type { Column } from '../components/ui/Table';
 
 export const DoctorManagement: React.FC = () => {
@@ -214,3 +214,4 @@ export const DoctorManagement: React.FC = () => {
 };
 
 export default DoctorManagement;
+

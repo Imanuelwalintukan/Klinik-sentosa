@@ -42,3 +42,30 @@ export const updatePaymentStatus = async (req: AuthRequest, res: Response) => {
         sendResponse(res, 400, false, null, error.message);
     }
 };
+
+export const getDailyRevenue = async (req: Request, res: Response) => {
+    try {
+        const report = await paymentService.getDailyRevenue();
+        sendResponse(res, 200, true, report);
+    } catch (error: any) {
+        sendResponse(res, 500, false, null, error.message);
+    }
+};
+
+export const getWeeklyRevenue = async (req: Request, res: Response) => {
+    try {
+        const report = await paymentService.getWeeklyRevenue();
+        sendResponse(res, 200, true, report);
+    } catch (error: any) {
+        sendResponse(res, 500, false, null, error.message);
+    }
+};
+
+export const getMonthlyRevenue = async (req: Request, res: Response) => {
+    try {
+        const report = await paymentService.getMonthlyRevenue();
+        sendResponse(res, 200, true, report);
+    } catch (error: any) {
+        sendResponse(res, 500, false, null, error.message);
+    }
+};

@@ -42,7 +42,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPayments = exports.createPayment = void 0;
+exports.getRevenueByDateRange = exports.getRevenueSummary = exports.updatePaymentStatus = exports.getPayments = exports.createPayment = void 0;
 const paymentService = __importStar(require("../services/payment.service"));
 const response_1 = require("../utils/response");
 const payment_validation_1 = require("../validation/payment.validation");
@@ -52,7 +52,7 @@ const createPayment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!validation.success) {
             return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        const payment = yield paymentService.createPayment(validation.data);
+        const payment = yield paymentService.createPayment(validation.data, req);
         (0, response_1.sendResponse)(res, 201, true, payment);
     }
     catch (error) {
@@ -70,3 +70,48 @@ const getPayments = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getPayments = getPayments;
+const updatePaymentStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const appointmentId = parseInt(req.params.appointmentId);
+        const validation = payment_validation_1.updatePaymentStatusValidation.safeParse(req.body);
+        if (!validation.success) {
+            return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
+        }
+        const { status } = validation.data;
+        const updatedPayment = yield paymentService.updatePaymentStatus(appointmentId, status, req);
+        (0, response_1.sendResponse)(res, 200, true, updatedPayment);
+    }
+    catch (error) {
+        (0, response_1.sendResponse)(res, 400, false, null, error.message);
+    }
+});
+exports.updatePaymentStatus = updatePaymentStatus;
+const getRevenueSummary = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const summary = yield paymentService.getRevenueSummary();
+        (0, response_1.sendResponse)(res, 200, true, summary);
+    }
+    catch (error) {
+        (0, response_1.sendResponse)(res, 500, false, null, error.message);
+    }
+});
+exports.getRevenueSummary = getRevenueSummary;
+const getRevenueByDateRange = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { start, end } = req.query;
+        if (!start || !end) {
+            return (0, response_1.sendResponse)(res, 400, false, null, 'Start and end dates are required');
+        }
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            return (0, response_1.sendResponse)(res, 400, false, null, 'Invalid date format');
+        }
+        const revenue = yield paymentService.getRevenueByDateRange(startDate, endDate);
+        (0, response_1.sendResponse)(res, 200, true, revenue);
+    }
+    catch (error) {
+        (0, response_1.sendResponse)(res, 500, false, null, error.message);
+    }
+});
+exports.getRevenueByDateRange = getRevenueByDateRange;

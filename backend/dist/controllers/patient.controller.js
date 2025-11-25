@@ -72,9 +72,9 @@ const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const validation = patient_validation_1.createPatientSchema.safeParse(req.body);
         if (!validation.success) {
-            return (0, response_1.sendResponse)(res, 400, false, null, validation.error.errors[0].message);
+            return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        const patient = yield patientService.createPatient(validation.data);
+        const patient = yield patientService.createPatient(validation.data, req);
         (0, response_1.sendResponse)(res, 201, true, patient);
     }
     catch (error) {
@@ -87,9 +87,9 @@ const updatePatient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const id = parseInt(req.params.id);
         const validation = patient_validation_1.updatePatientSchema.safeParse(req.body);
         if (!validation.success) {
-            return (0, response_1.sendResponse)(res, 400, false, null, validation.error.errors[0].message);
+            return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        const patient = yield patientService.updatePatient(id, validation.data);
+        const patient = yield patientService.updatePatient(id, validation.data, req);
         (0, response_1.sendResponse)(res, 200, true, patient);
     }
     catch (error) {
@@ -100,7 +100,7 @@ exports.updatePatient = updatePatient;
 const deletePatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
-        yield patientService.deletePatient(id);
+        yield patientService.deletePatient(id, req);
         (0, response_1.sendResponse)(res, 200, true, null);
     }
     catch (error) {

@@ -8,7 +8,7 @@ import { Textarea } from '../components/ui/Textarea';
 import { Card } from '../components/ui/Card';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import type { Appointment, MedicalRecord } from '../types';
+import type { Appointment, MedicalRecord } from '../types/index';
 
 export const Examination: React.FC = () => {
     const { id } = useParams();
@@ -134,3 +134,4 @@ export const Examination: React.FC = () => {
         </div>
     );
 };
+

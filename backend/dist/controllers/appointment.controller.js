@@ -42,7 +42,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAppointment = exports.createAppointment = exports.getAppointment = exports.getAppointments = void 0;
+exports.reassignDoctor = exports.cancelAppointment = exports.updateAppointment = exports.createAppointment = exports.getAppointment = exports.getAppointments = void 0;
 const appointmentService = __importStar(require("../services/appointment.service"));
 const response_1 = require("../utils/response");
 const appointment_validation_1 = require("../validation/appointment.validation");
@@ -50,7 +50,7 @@ const getAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const date = req.query.date;
         const doctorId = req.query.doctorId ? parseInt(req.query.doctorId) : undefined;
-        const appointments = yield appointmentService.getAppointments(date, doctorId);
+        const appointments = yield appointmentService.getAppointments(date, doctorId, req.user);
         (0, response_1.sendResponse)(res, 200, true, appointments);
     }
     catch (error) {
@@ -77,7 +77,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         }
         if (!req.user)
             return (0, response_1.sendResponse)(res, 401, false, null, 'Unauthorized');
-        const appointment = yield appointmentService.createAppointment(validation.data, req.user.id);
+        const appointment = yield appointmentService.createAppointment(validation.data, req);
         (0, response_1.sendResponse)(res, 201, true, appointment);
     }
     catch (error) {
@@ -92,7 +92,7 @@ const updateAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (!validation.success) {
             return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        const appointment = yield appointmentService.updateAppointment(id, validation.data);
+        const appointment = yield appointmentService.updateAppointment(id, validation.data, req);
         (0, response_1.sendResponse)(res, 200, true, appointment);
     }
     catch (error) {
@@ -100,3 +100,26 @@ const updateAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.updateAppointment = updateAppointment;
+const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = parseInt(req.params.id);
+        const cancelledAppointment = yield appointmentService.cancelAppointment(id, req);
+        (0, response_1.sendResponse)(res, 200, true, cancelledAppointment);
+    }
+    catch (error) {
+        (0, response_1.sendResponse)(res, 400, false, null, error.message);
+    }
+});
+exports.cancelAppointment = cancelAppointment;
+const reassignDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = parseInt(req.params.id);
+        const { newDoctorId } = req.body;
+        const reassignedAppointment = yield appointmentService.reassignDoctor(id, newDoctorId, req);
+        (0, response_1.sendResponse)(res, 200, true, reassignedAppointment);
+    }
+    catch (error) {
+        (0, response_1.sendResponse)(res, 400, false, null, error.message);
+    }
+});
+exports.reassignDoctor = reassignDoctor;

@@ -3,7 +3,7 @@ import { Card } from '../components/ui/Card';
 import { Pill, Calendar, User, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCustomerPrescriptions } from '../services/api';
-import type { Prescription } from '../types';
+import type { Prescription } from '../types/index';
 
 export const CustomerPrescriptions: React.FC = () => {
     const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
@@ -158,3 +158,4 @@ export const CustomerPrescriptions: React.FC = () => {
         </div>
     );
 };
+

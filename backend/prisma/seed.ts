@@ -137,6 +137,18 @@ async function main() {
       patientId: patients[2].id,
     },
   });
+
+  const customerDia = await prisma.user.upsert({
+    where: { email: 'dia@customer.com' },
+    update: {},
+    create: {
+      name: patients[3].name,
+      email: 'dia@customer.com',
+      passwordHash,
+      role: Role.CUSTOMER,
+      patientId: patients[3].id,
+    },
+  });
   console.log('Customer users seeded.');
 
   // 4. Seed Drugs

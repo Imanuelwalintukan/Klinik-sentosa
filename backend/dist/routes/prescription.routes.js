@@ -37,9 +37,12 @@ const express_1 = require("express");
 const prescriptionController = __importStar(require("../controllers/prescription.controller"));
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const client_1 = require("@prisma/client");
+const validate_middleware_1 = require("../middleware/validate.middleware"); // Use custom validate
+const prescription_validation_1 = require("../validation/prescription.validation");
 const router = (0, express_1.Router)();
 router.use(auth_middleware_1.authenticate);
-router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.DOCTOR]), prescriptionController.createPrescription);
+router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.DOCTOR]), (0, validate_middleware_1.validate)(prescription_validation_1.createPrescriptionSchema), prescriptionController.createPrescription);
 router.get('/', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.PHARMACIST, client_1.Role.DOCTOR]), prescriptionController.getPrescriptions);
 router.get('/:id', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.PHARMACIST, client_1.Role.DOCTOR]), prescriptionController.getPrescription);
+router.put('/:id/status', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.PHARMACIST]), (0, validate_middleware_1.validate)(prescription_validation_1.updatePrescriptionStatusValidation), prescriptionController.updatePrescriptionStatus);
 exports.default = router;

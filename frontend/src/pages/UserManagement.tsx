@@ -6,7 +6,7 @@ import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
 import toast from 'react-hot-toast';
 import { getAllUsers, createUser, updateUser, changePassword } from '../services/api';
-import type { User } from '../types';
+import type { User } from '../types/index';
 
 export const UserManagement: React.FC = () => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -265,3 +265,4 @@ export const UserManagement: React.FC = () => {
 };
 
 export default UserManagement;
+

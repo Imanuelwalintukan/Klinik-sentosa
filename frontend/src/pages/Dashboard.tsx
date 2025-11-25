@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
 import { Users, Calendar, Pill, DollarSign, AlertTriangle, Stethoscope } from 'lucide-react';
 import api from '../services/api';
-import type { DashboardStats, Appointment, Drug } from '../types';
+import type { DashboardStats, Appointment, Drug } from '../types/index';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '../lib/motion';
 
@@ -271,3 +271,4 @@ export const Dashboard: React.FC = () => {
         </div>
     );
 };
+

@@ -37,10 +37,18 @@ const express_1 = require("express");
 const appointmentController = __importStar(require("../controllers/appointment.controller"));
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const client_1 = require("@prisma/client");
+const validate_middleware_1 = require("../middleware/validate.middleware");
+const zod_1 = require("zod"); // Import z from zod
+const appointment_validation_1 = require("../validation/appointment.validation");
 const router = (0, express_1.Router)();
 router.use(auth_middleware_1.authenticate);
+const reassignDoctorValidation = zod_1.z.object({
+    newDoctorId: zod_1.z.number().int().positive(),
+});
 router.get('/', appointmentController.getAppointments);
 router.get('/:id', appointmentController.getAppointment);
-router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), appointmentController.createAppointment);
-router.put('/:id', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF, client_1.Role.DOCTOR]), appointmentController.updateAppointment);
+router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), (0, validate_middleware_1.validate)(appointment_validation_1.createAppointmentSchema), appointmentController.createAppointment);
+router.put('/:id', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF, client_1.Role.DOCTOR]), (0, validate_middleware_1.validate)(appointment_validation_1.updateAppointmentSchema), appointmentController.updateAppointment);
+router.post('/:id/cancel', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), appointmentController.cancelAppointment);
+router.put('/:id/reassign-doctor', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), (0, validate_middleware_1.validate)(reassignDoctorValidation), appointmentController.reassignDoctor);
 exports.default = router;

@@ -13,4 +13,9 @@ router.post('/', authorize([Role.ADMIN, Role.STAFF]), validate(createPaymentSche
 router.get('/', authorize([Role.ADMIN, Role.STAFF]), paymentController.getPayments);
 router.put('/appointment/:appointmentId/status', authorize([Role.ADMIN, Role.STAFF]), validate(updatePaymentStatusValidation), paymentController.updatePaymentStatus);
 
+// Revenue report routes
+router.get('/reports/daily', authorize([Role.ADMIN]), paymentController.getDailyRevenue);
+router.get('/reports/weekly', authorize([Role.ADMIN]), paymentController.getWeeklyRevenue);
+router.get('/reports/monthly', authorize([Role.ADMIN]), paymentController.getMonthlyRevenue);
+
 export default router;

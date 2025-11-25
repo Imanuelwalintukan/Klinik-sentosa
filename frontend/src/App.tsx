@@ -24,6 +24,11 @@ import { UserManagement } from './pages/UserManagement';
 import { DoctorManagement } from './pages/DoctorManagement';
 import { PaymentReports } from './pages/PaymentReports';
 import { SystemLogs } from './pages/SystemLogs';
+import { CustomerQueue } from './pages/CustomerQueue';
+import { CustomerAppointments } from './pages/CustomerAppointments';
+import { CustomerPrescriptions } from './pages/CustomerPrescriptions';
+import { CustomerPayments } from './pages/CustomerPayments';
+import { CustomerProfile } from './pages/CustomerProfile';
 
 function AppRoutes() {
   const { user } = useAuth();
@@ -166,6 +171,46 @@ function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
               <SystemLogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer/queue"
+          element={
+            <ProtectedRoute allowedRoles={['CUSTOMER']}>
+              <CustomerQueue />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer/appointments"
+          element={
+            <ProtectedRoute allowedRoles={['CUSTOMER']}>
+              <CustomerAppointments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer/prescriptions"
+          element={
+            <ProtectedRoute allowedRoles={['CUSTOMER']}>
+              <CustomerPrescriptions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer/payments"
+          element={
+            <ProtectedRoute allowedRoles={['CUSTOMER']}>
+              <CustomerPayments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer/profile"
+          element={
+            <ProtectedRoute allowedRoles={['CUSTOMER']}>
+              <CustomerProfile />
             </ProtectedRoute>
           }
         />

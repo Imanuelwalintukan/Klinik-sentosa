@@ -9,7 +9,7 @@ import { Table } from '../components/ui/Table';
 import { Card } from '../components/ui/Card';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import type { Patient } from '../types';
+import type { Patient } from '../types/index';
 
 export const Patients: React.FC = () => {
     const navigate = useNavigate();
@@ -110,3 +110,4 @@ export const Patients: React.FC = () => {
         </div>
     );
 };
+

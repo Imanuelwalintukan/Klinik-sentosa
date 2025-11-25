@@ -74,7 +74,7 @@ const createDrug = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!validation.success) {
             return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        const drug = yield drugService.createDrug(validation.data);
+        const drug = yield drugService.createDrug(validation.data, req);
         (0, response_1.sendResponse)(res, 201, true, drug);
     }
     catch (error) {
@@ -89,7 +89,7 @@ const updateDrug = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!validation.success) {
             return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        const drug = yield drugService.updateDrug(id, validation.data);
+        const drug = yield drugService.updateDrug(id, validation.data, req);
         (0, response_1.sendResponse)(res, 200, true, drug);
     }
     catch (error) {
@@ -100,7 +100,7 @@ exports.updateDrug = updateDrug;
 const deleteDrug = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id);
-        yield drugService.deleteDrug(id);
+        yield drugService.deleteDrug(id, req);
         (0, response_1.sendResponse)(res, 200, true, null);
     }
     catch (error) {

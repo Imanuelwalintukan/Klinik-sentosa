@@ -5,18 +5,14 @@ import { Input } from '../components/ui/Input';
 import { User, Mail, Phone, MapPin, Calendar, Save, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCustomerProfile, updateCustomerProfile } from '../services/api';
-import { CustomerProfile as CustomerProfileType } from '../types';
+import type { CustomerProfile as CustomerProfileType } from '../types';
 
 export const CustomerProfile: React.FC = () => {
     const [profile, setProfile] = useState<CustomerProfileType | null>(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        address: '',
-    });
+    const [formData, setFormData] = useState({ name: '', phone: '', address: '' });
 
     useEffect(() => {
         fetchProfile();
@@ -123,58 +119,25 @@ export const CustomerProfile: React.FC = () => {
                 {/* Details Card */}
                 <Card className="p-6 lg:col-span-2">
                     <h3 className="text-xl font-bold text-text-white mb-6">Personal Information</h3>
-
                     {editing ? (
                         <div className="space-y-4">
-                            <Input
-                                label="Full Name"
-                                name="name"
-                                value={formData.name}
+                            <Input label="Full Name" name="name" value={formData.name} onChange={handleInputChange} required />
+                            <Input label="Phone Number" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="+62 xxx xxxx xxxx" />
+                            <label className="block text-sm font-medium text-text-default mb-2">Address</label>
+                            <textarea
+                                name="address"
+                                value={formData.address}
                                 onChange={handleInputChange}
-                                icon={User}
-                                required
+                                rows={3}
+                                className="w-full px-4 py-2 bg-bg-dark border border-white/10 rounded-lg text-text-white focus:outline-none focus:ring-2 focus:ring-primary-main"
+                                placeholder="Enter your address"
                             />
-
-                            <Input
-                                label="Phone Number"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleInputChange}
-                                icon={Phone}
-                                placeholder="+62 xxx xxxx xxxx"
-                            />
-
-                            <div>
-                                <label className="block text-sm font-medium text-text-default mb-2">
-                                    <MapPin className="inline h-4 w-4 mr-2" />
-                                    Address
-                                </label>
-                                <textarea
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    rows={3}
-                                    className="w-full px-4 py-2 bg-bg-dark border border-white/10 rounded-lg text-text-white focus:outline-none focus:ring-2 focus:ring-primary-main"
-                                    placeholder="Enter your address"
-                                />
-                            </div>
-
                             <div className="flex space-x-3 pt-4">
-                                <Button
-                                    onClick={handleSave}
-                                    disabled={saving}
-                                    variant="primary"
-                                    className="flex-1"
-                                >
+                                <Button onClick={handleSave} disabled={saving} variant="primary" className="flex-1">
                                     <Save className="h-4 w-4 mr-2" />
                                     {saving ? 'Saving...' : 'Save Changes'}
                                 </Button>
-                                <Button
-                                    onClick={handleCancel}
-                                    disabled={saving}
-                                    variant="outline"
-                                    className="flex-1"
-                                >
+                                <Button onClick={handleCancel} disabled={saving} variant="outline" className="flex-1">
                                     Cancel
                                 </Button>
                             </div>
@@ -218,11 +181,7 @@ export const CustomerProfile: React.FC = () => {
                                 <div>
                                     <p className="text-text-muted text-sm">Date of Birth</p>
                                     <p className="text-text-white font-medium">
-                                        {new Date(profile.patient.birthDate).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                        })}
+                                        {new Date(profile.patient.birthDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                     </p>
                                 </div>
                             </div>
@@ -245,21 +204,14 @@ export const CustomerProfile: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <p className="text-text-muted text-sm mb-1">Account Status</p>
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${profile.user.isActive
-                            ? 'bg-status-success/20 text-status-success'
-                            : 'bg-status-error/20 text-status-error'
-                            }`}>
+                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${profile.user.isActive ? 'bg-status-success/20 text-status-success' : 'bg-status-error/20 text-status-error'}`}>
                             {profile.user.isActive ? 'Active' : 'Inactive'}
                         </span>
                     </div>
                     <div>
                         <p className="text-text-muted text-sm mb-1">Member Since</p>
                         <p className="text-text-white font-medium">
-                            {new Date(profile.user.createdAt).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}
+                            {new Date(profile.user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </p>
                     </div>
                 </div>

@@ -17,22 +17,33 @@ const client_1 = require("@prisma/client");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma = new client_1.PrismaClient();
-const login = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
-    // Note: Schema uses email as unique, but seed uses username? 
-    // Let's check schema. User has email @unique. Seed uses email.
-    // Wait, my previous seed used email.
-    // Let's support email login.
+const login = (email, password, ipAddress, userAgent) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield prisma.user.findUnique({
         where: { email },
     });
     if (!user) {
         throw new Error('Invalid email or password');
     }
+    if (!user.isActive) {
+        throw new Error('Account is inactive. Please contact support.');
+    }
     const isMatch = yield bcryptjs_1.default.compare(password, user.passwordHash);
     if (!isMatch) {
         throw new Error('Invalid email or password');
     }
-    const token = jsonwebtoken_1.default.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-    return { token, user: { id: user.id, name: user.name, email: user.email, role: user.role } };
+    const updatedUser = yield prisma.user.update({
+        where: { id: user.id },
+        data: {
+            lastLoginAt: new Date(),
+            loginHistory: {
+                create: {
+                    ipAddress,
+                    userAgent,
+                },
+            },
+        },
+    });
+    const token = jsonwebtoken_1.default.sign({ id: updatedUser.id, role: updatedUser.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+    return { token, user: { id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, role: updatedUser.role, lastLoginAt: updatedUser.lastLoginAt } };
 });
 exports.login = login;

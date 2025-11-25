@@ -7,7 +7,7 @@ import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import type { Prescription } from '../types';
+import type { Prescription } from '../types/index';
 
 export const Pharmacy: React.FC = () => {
     const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
@@ -135,3 +135,4 @@ export const Pharmacy: React.FC = () => {
         </div>
     );
 };
+

@@ -42,7 +42,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMedicalRecord = exports.createMedicalRecord = void 0;
+exports.updateMedicalRecord = exports.getMedicalRecord = exports.createMedicalRecord = void 0;
 const medicalRecordService = __importStar(require("../services/medical-record.service"));
 const response_1 = require("../utils/response");
 const medical_record_validation_1 = require("../validation/medical-record.validation");
@@ -52,7 +52,7 @@ const createMedicalRecord = (req, res) => __awaiter(void 0, void 0, void 0, func
         if (!validation.success) {
             return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
         }
-        const record = yield medicalRecordService.createMedicalRecord(validation.data);
+        const record = yield medicalRecordService.createMedicalRecord(validation.data, req);
         (0, response_1.sendResponse)(res, 201, true, record);
     }
     catch (error) {
@@ -73,3 +73,18 @@ const getMedicalRecord = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getMedicalRecord = getMedicalRecord;
+const updateMedicalRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const appointmentId = parseInt(req.params.appointmentId);
+        const validation = medical_record_validation_1.updateMedicalRecordSchema.safeParse(req.body);
+        if (!validation.success) {
+            return (0, response_1.sendResponse)(res, 400, false, null, validation.error.issues[0].message);
+        }
+        const record = yield medicalRecordService.updateMedicalRecord(appointmentId, validation.data, req);
+        (0, response_1.sendResponse)(res, 200, true, record);
+    }
+    catch (error) {
+        (0, response_1.sendResponse)(res, 400, false, null, error.message);
+    }
+});
+exports.updateMedicalRecord = updateMedicalRecord;

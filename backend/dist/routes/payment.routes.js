@@ -37,8 +37,14 @@ const express_1 = require("express");
 const paymentController = __importStar(require("../controllers/payment.controller"));
 const auth_middleware_1 = require("../middleware/auth.middleware");
 const client_1 = require("@prisma/client");
+const validate_middleware_1 = require("../middleware/validate.middleware"); // Use custom validate
+const payment_validation_1 = require("../validation/payment.validation");
 const router = (0, express_1.Router)();
 router.use(auth_middleware_1.authenticate);
-router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), paymentController.createPayment);
+router.post('/', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), (0, validate_middleware_1.validate)(payment_validation_1.createPaymentSchema), paymentController.createPayment);
 router.get('/', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), paymentController.getPayments);
+router.put('/appointment/:appointmentId/status', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN, client_1.Role.STAFF]), (0, validate_middleware_1.validate)(payment_validation_1.updatePaymentStatusValidation), paymentController.updatePaymentStatus);
+// Revenue endpoints
+router.get('/revenue/summary', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN]), paymentController.getRevenueSummary);
+router.get('/revenue/range', (0, auth_middleware_1.authorize)([client_1.Role.ADMIN]), paymentController.getRevenueByDateRange);
 exports.default = router;
