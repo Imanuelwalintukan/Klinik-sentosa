@@ -1,0 +1,67 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Global CSS Variables from New Tailwind Config */
+  --primary-main: #0D9488;
+  /* Teal-600 */
+  --primary-light: #2DD4BF;
+  /* Teal-400 */
+  --primary-dark: #0F766E;
+  /* Teal-700 */
+
+  --secondary-main: #06B6D4;
+  /* Cyan-500 */
+  --secondary-light: #67E8F9;
+  /* Cyan-300 */
+
+  --bg-dark: #0F172A;
+  --bg-light: #F8FAFC;
+
+  --text-default: #F1F5F9;
+  --text-muted: #94A3B8;
+  --text-white: #FFFFFF;
+
+  /* Medical Background Gradient Colors */
+  --bg-medical-dark: #022C22;
+  --bg-medical-mid: #115E59;
+  --bg-medical-light: #134E4A;
+  --bg-medical-accent: #2DD4BF;
+
+  --status-success: #10B981;
+  --status-warning: #F59E0B;
+  --status-error: #EF4444;
+  --status-info: #3B82F6;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-transparent text-text-default antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading text-text-white font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/80 dark:bg-bg-card backdrop-blur-md border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-glass transition-all duration-300;
+  }
+
+  .glass-panel-hover {
+    @apply hover:bg-white/90 dark:hover:bg-bg-card-hover hover:shadow-md dark:hover:shadow-glass-hover hover:-translate-y-0.5 transition-all duration-300;
+  }
+
+  .text-glow {
+    @apply drop-shadow-[0_0_10px_rgba(13, 148, 136, 0.5)];
+  }
+}
