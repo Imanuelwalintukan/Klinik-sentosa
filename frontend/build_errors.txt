@@ -1,0 +1,11 @@
+src/pages/CustomerDashboard.tsx(6,10): error TS1484: 'CustomerQueue' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/CustomerDashboard.tsx(6,46): error TS1484: 'Appointment' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/CustomerDashboard.tsx(6,59): error TS1484: 'Prescription' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/CustomerDashboard.tsx(6,73): error TS1484: 'Payment' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/CustomerDashboard.tsx(82,106): error TS18048: 'queueData.appointment.doctor.user' is possibly 'undefined'.
+src/pages/CustomerDashboard.tsx(144,81): error TS18048: 'apt.doctor.user' is possibly 'undefined'.
+src/pages/CustomerPayments.tsx(126,55): error TS18048: 'payment.appointment' is possibly 'undefined'.
+src/pages/CustomerPrescriptions.tsx(109,85): error TS18048: 'prescription.doctor.user' is possibly 'undefined'.
+src/pages/CustomerPrescriptions.tsx(137,97): error TS18048: 'item.drug' is possibly 'undefined'.
+src/pages/CustomerPrescriptions.tsx(138,98): error TS18048: 'item.drug' is possibly 'undefined'.
+src/pages/Payments.tsx(41,29): error TS6133: 'data' is declared but its value is never read.

@@ -24,7 +24,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 <select
                     ref={ref}
                     className={cn(
-                        'w-full rounded-lg border border-white/15 bg-white/15 px-3 py-2 text-text-default text-base transition-all duration-200',
+                        'w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white text-base transition-all duration-200',
                         'focus:ring-2 focus:ring-primary-main focus:border-primary-light focus:ring-offset-2 focus:ring-offset-bg-dark', // Focus ring uses new theme colors
                         'disabled:bg-bg-dark/50 disabled:text-text-muted disabled:cursor-not-allowed', // Adjusted disabled styles
                         error && 'border-status-error focus:ring-status-error focus:border-status-error', // Error state styling
@@ -33,7 +33,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     {...props}
                 >
                     {options.map((option) => (
-                        <option key={String(option.value)} value={option.value}>
+                        <option
+                            key={String(option.value)}
+                            value={option.value}
+                            className="bg-gray-900 text-white"
+                        >
                             {option.label}
                         </option>
                     ))}

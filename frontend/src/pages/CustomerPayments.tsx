@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { CreditCard, Calendar, Download, DollarSign, FileText } from 'lucide-react';
+import { CreditCard, Calendar, Download, DollarSign, FileText, User as UserIcon, Pill } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCustomerPayments } from '../services/api';
 import type { Payment } from '../types/index';
@@ -123,7 +123,17 @@ export const CustomerPayments: React.FC = () => {
                                     <div>
                                         <p className="text-text-muted text-sm">Appointment Date</p>
                                         <p className="text-text-white font-medium">
-                                            {new Date(payment.appointment.scheduledAt).toLocaleDateString()}
+                                            {payment.appointment?.scheduledAt ? new Date(payment.appointment.scheduledAt).toLocaleDateString() : 'N/A'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start">
+                                    <UserIcon className="h-5 w-5 text-primary-main mr-2 mt-0.5" />
+                                    <div>
+                                        <p className="text-text-muted text-sm">Attending Doctor</p>
+                                        <p className="text-text-white font-medium">
+                                            {payment.appointment?.doctor?.user?.name || 'N/A'}
                                         </p>
                                     </div>
                                 </div>
@@ -135,7 +145,46 @@ export const CustomerPayments: React.FC = () => {
                                         <p className="text-text-white font-medium">{payment.method}</p>
                                     </div>
                                 </div>
+
+                                {payment.appointment?.medicalRecord?.diagnosis && (
+                                    <div className="flex items-start">
+                                        <FileText className="h-5 w-5 text-primary-main mr-2 mt-0.5" />
+                                        <div>
+                                            <p className="text-text-muted text-sm">Diagnosis</p>
+                                            <p className="text-text-white font-medium">
+                                                {payment.appointment.medicalRecord.diagnosis}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+
+                            {/* Prescription Details */}
+                            {payment.appointment?.medicalRecord?.prescription?.items &&
+                                payment.appointment.medicalRecord.prescription.items.length > 0 && (
+                                    <div className="mb-4 border-t border-white/10 pt-4">
+                                        <h4 className="text-sm font-semibold text-text-white mb-3 flex items-center">
+                                            <Pill className="h-4 w-4 mr-2 text-primary-main" />
+                                            Prescription
+                                        </h4>
+                                        <div className="bg-bg-dark/30 rounded-lg p-4 space-y-2">
+                                            {payment.appointment.medicalRecord.prescription.items.map((item: any, idx: number) => (
+                                                <div key={idx} className="flex justify-between items-start text-sm">
+                                                    <div className="flex-1">
+                                                        <p className="text-text-white font-medium">{item.drug?.name}</p>
+                                                        <p className="text-text-muted text-xs">{item.dosageInstructions}</p>
+                                                    </div>
+                                                    <div className="text-right ml-4">
+                                                        <p className="text-text-white font-medium">{item.qty}x</p>
+                                                        <p className="text-text-muted text-xs">
+                                                            Rp {(Number(item.drug?.unitPrice || 0) * item.qty).toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                             {/* Amount Breakdown */}
                             <div className="border-t border-white/10 pt-4">
@@ -188,4 +237,3 @@ export const CustomerPayments: React.FC = () => {
         </div>
     );
 };
-

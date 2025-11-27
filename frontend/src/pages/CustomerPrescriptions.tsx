@@ -106,7 +106,7 @@ export const CustomerPrescriptions: React.FC = () => {
                                     <User className="h-5 w-5 text-primary-main mr-2 mt-0.5" />
                                     <div>
                                         <p className="text-text-muted text-sm">Prescribed by</p>
-                                        <p className="text-text-white font-medium">{prescription.doctor?.user.name || 'N/A'}</p>
+                                        <p className="text-text-white font-medium">{prescription.doctor?.user?.name || 'N/A'}</p>
                                     </div>
                                 </div>
 
@@ -134,8 +134,8 @@ export const CustomerPrescriptions: React.FC = () => {
                                         <div key={index} className="bg-bg-dark/30 rounded-lg p-4">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
-                                                    <p className="text-text-white font-medium">{item.drug.name}</p>
-                                                    <p className="text-text-muted text-sm">SKU: {item.drug.sku}</p>
+                                                    <p className="text-text-white font-medium">{item.drug?.name}</p>
+                                                    <p className="text-text-muted text-sm">SKU: {item.drug?.sku}</p>
                                                 </div>
                                                 <span className="bg-primary-main/20 text-primary-light px-3 py-1 rounded-full text-sm font-semibold">
                                                     Qty: {item.qty}
@@ -158,4 +158,3 @@ export const CustomerPrescriptions: React.FC = () => {
         </div>
     );
 };
-

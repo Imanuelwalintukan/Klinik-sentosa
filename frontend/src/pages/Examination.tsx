@@ -1,5 +1,3 @@
-// Completed by Antigravity AI — Frontend Completion
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -15,6 +13,7 @@ export const Examination: React.FC = () => {
     const navigate = useNavigate();
     const [appointment, setAppointment] = useState<Appointment | null>(null);
     const [medicalRecord, setMedicalRecord] = useState<MedicalRecord | null>(null);
+    const [patientHistory, setPatientHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     const { register, handleSubmit } = useForm();
@@ -34,6 +33,16 @@ export const Examination: React.FC = () => {
                 setMedicalRecord(mrResponse.data.data);
             } catch (error) {
                 // No medical record yet
+            }
+
+            // Load patient history
+            if (response.data.data.patientId) {
+                try {
+                    const historyResponse = await api.get(`/medical-records/patient/${response.data.data.patientId}/history`);
+                    setPatientHistory(historyResponse.data.data || []);
+                } catch (error) {
+                    console.error('Failed to load patient history');
+                }
             }
         } catch (error) {
             toast.error('Failed to load appointment');
@@ -131,6 +140,41 @@ export const Examination: React.FC = () => {
                     </form>
                 )}
             </Card>
+
+            {/* Patient Medical History */}
+            {patientHistory.length > 0 && (
+                <Card title="Patient Medical History">
+                    <div className="space-y-4">
+                        {patientHistory.map((record: any) => (
+                            <div key={record.id} className="border-b border-gray-200 pb-4 last:border-b-0">
+                                <div className="flex justify-between items-start mb-2">
+                                    <div>
+                                        <p className="text-sm text-gray-600">
+                                            {new Date(record.scheduledAt).toLocaleDateString()} - Dr. {record.doctor?.user?.name}
+                                        </p>
+                                        <p className="font-medium mt-1">{record.medicalRecord?.diagnosis}</p>
+                                    </div>
+                                </div>
+                                {record.medicalRecord?.notes && (
+                                    <p className="text-sm text-gray-600 mt-2">Notes: {record.medicalRecord.notes}</p>
+                                )}
+                                {record.medicalRecord?.prescription && (
+                                    <div className="mt-2">
+                                        <p className="text-sm font-medium text-gray-700">Prescription:</p>
+                                        <ul className="text-sm text-gray-600 ml-4 mt-1">
+                                            {record.medicalRecord.prescription.items?.map((item: any, idx: number) => (
+                                                <li key={idx}>
+                                                    {item.drug?.name} - {item.qty}x ({item.dosageInstructions})
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+            )}
         </div>
     );
 };

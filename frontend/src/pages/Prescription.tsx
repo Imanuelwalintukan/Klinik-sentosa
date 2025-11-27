@@ -82,7 +82,7 @@ export const Prescription: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <p className="text-sm text-gray-600">Patient</p>
-                        <p className="font-medium">{medicalRecord?.patient?.name}</p>
+                        <p className="font-medium">{medicalRecord?.appointment?.patient?.name}</p>
                     </div>
                     <div>
                         <p className="text-sm text-gray-600">Diagnosis</p>

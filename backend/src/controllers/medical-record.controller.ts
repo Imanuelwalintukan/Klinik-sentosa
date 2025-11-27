@@ -18,12 +18,33 @@ export const createMedicalRecord = async (req: AuthRequest, res: Response) => {
     }
 };
 
+export const getMedicalRecordById = async (req: Request, res: Response) => {
+    try {
+        const id = parseInt(req.params.id);
+        const record = await medicalRecordService.getMedicalRecordById(id);
+        if (!record) return sendResponse(res, 404, false, null, 'Medical record not found');
+        sendResponse(res, 200, true, record);
+    } catch (error: any) {
+        sendResponse(res, 500, false, null, error.message);
+    }
+};
+
 export const getMedicalRecord = async (req: Request, res: Response) => {
     try {
         const appointmentId = parseInt(req.params.appointmentId);
         const record = await medicalRecordService.getMedicalRecordByAppointmentId(appointmentId);
         if (!record) return sendResponse(res, 404, false, null, 'Medical record not found');
         sendResponse(res, 200, true, record);
+    } catch (error: any) {
+        sendResponse(res, 500, false, null, error.message);
+    }
+};
+
+export const getPatientHistory = async (req: Request, res: Response) => {
+    try {
+        const patientId = parseInt(req.params.patientId);
+        const history = await medicalRecordService.getPatientHistory(patientId);
+        sendResponse(res, 200, true, history);
     } catch (error: any) {
         sendResponse(res, 500, false, null, error.message);
     }

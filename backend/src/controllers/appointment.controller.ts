@@ -1,13 +1,23 @@
 import { Request, Response } from 'express';
 import * as appointmentService from '../services/appointment.service';
+import * as doctorService from '../services/doctor.service';
 import { sendResponse } from '../utils/response';
 import { createAppointmentSchema, updateAppointmentSchema } from '../validation/appointment.validation';
 import { AuthRequest } from '../middleware/auth.middleware';
 
-export const getAppointments = async (req: Request, res: Response) => {
+export const getAppointments = async (req: AuthRequest, res: Response) => {
     try {
         const date = req.query.date as string;
-        const doctorId = req.query.doctorId ? parseInt(req.query.doctorId as string) : undefined;
+        let doctorId = req.query.doctorId ? parseInt(req.query.doctorId as string) : undefined;
+
+        // Enforce doctorId if the user is a DOCTOR
+        if (req.user?.role === 'DOCTOR') {
+            const doctor = await doctorService.getDoctorByUserId(req.user.id);
+            if (doctor) {
+                doctorId = doctor.id;
+            }
+        }
+
         const appointments = await appointmentService.getAppointments(date, doctorId);
         sendResponse(res, 200, true, appointments);
     } catch (error: any) {
@@ -76,4 +86,3 @@ export const reassignDoctor = async (req: AuthRequest, res: Response) => {
         sendResponse(res, 400, false, null, error.message);
     }
 };
-

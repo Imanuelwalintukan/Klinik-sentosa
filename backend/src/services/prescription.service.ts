@@ -21,10 +21,16 @@ export const createPrescription = async (data: any, req: AuthRequest) => {
     // Verify medical record exists
     const medicalRecord = await prisma.medicalRecord.findUnique({
         where: { id: medicalRecordId },
+        include: { appointment: { include: { doctor: true } } },
     });
     if (!medicalRecord) throw new Error('Medical record not found');
 
-    // Transaction: Create Prescription, Create Items (Check Stock only)
+    // Verify doctor is assigned to this appointment
+    if (medicalRecord.appointment.doctorId !== doctor.id) {
+        throw new Error('You are not authorized to create prescription for this appointment');
+    }
+
+    // Transaction: Create Prescription and Items (NO stock validation or deduction)
     return prisma.$transaction(async (tx: any) => {
         // 1. Create Prescription
         const prescription = await tx.prescription.create({
@@ -37,16 +43,12 @@ export const createPrescription = async (data: any, req: AuthRequest) => {
 
         await logActivity(req, 'CREATE', 'PRESCRIPTION', prescription.id, null, prescription);
 
-        // 2. Process Items
+        // 2. Create Prescription Items (no stock check)
         for (const item of items) {
             const drug = await tx.drug.findUnique({ where: { id: item.drugId } });
             if (!drug) throw new Error(`Drug with ID ${item.drugId} not found`);
 
-            if (drug.stockQty < item.qty) {
-                throw new Error(`Insufficient stock for drug ${drug.name}. Available: ${drug.stockQty}, Requested: ${item.qty}`);
-            }
-
-            // Create Prescription Item
+            // Create Prescription Item without checking stock
             await tx.prescriptionItem.create({
                 data: {
                     prescriptionId: prescription.id,
@@ -61,14 +63,21 @@ export const createPrescription = async (data: any, req: AuthRequest) => {
     });
 };
 
-export const getPrescriptions = async (status?: string) => { // Accept optional status parameter
-    const whereClause: { status?: PrescriptionStatus } = {};
+export const getPrescriptions = async (status?: string) => {
+    const whereClause: any = {};
+
     if (status) {
-        whereClause.status = status as PrescriptionStatus;
+        // Handle comma-separated status values
+        const statuses = status.split(',').map(s => s.trim());
+        if (statuses.length > 1) {
+            whereClause.status = { in: statuses as PrescriptionStatus[] };
+        } else {
+            whereClause.status = status as PrescriptionStatus;
+        }
     }
 
     return prisma.prescription.findMany({
-        where: whereClause, // Apply the where clause
+        where: whereClause,
         include: {
             items: { include: { drug: true } },
             medicalRecord: { include: { appointment: { include: { patient: true } } } },
@@ -107,14 +116,30 @@ export const updatePrescriptionStatus = async (id: number, status: PrescriptionS
 
         if (!oldPrescription) throw new Error('Prescription not found');
 
-        // Logic when changing to PREPARED
+        // Logic when changing to PREPARED (validate stock only, don't deduct)
         if (status === PrescriptionStatus.PREPARED && oldPrescription.status === PrescriptionStatus.PENDING) {
-            let prescriptionFee = 0;
-
+            // Validate stock availability for all items
             for (const item of oldPrescription.items) {
                 const drug = item.drug;
                 if (drug.stockQty < item.qty) {
-                    throw new Error(`Insufficient stock for drug ${drug.name} during preparation.`);
+                    throw new Error(`Insufficient stock for drug ${drug.name}. Available: ${drug.stockQty}, Required: ${item.qty}`);
+                }
+            }
+            // Stock validation passed, but don't deduct yet
+            await logActivity(req, 'PREPARE', 'PRESCRIPTION', id, { status: oldPrescription.status }, { status: 'PREPARED' });
+        }
+
+        // Logic when changing to DISPENSED (deduct stock and create payment)
+        if (status === PrescriptionStatus.DISPENSED && oldPrescription.status === PrescriptionStatus.PREPARED) {
+            let prescriptionFee = 0;
+
+            // Deduct stock and calculate prescription fee
+            for (const item of oldPrescription.items) {
+                const drug = item.drug;
+
+                // Final stock check before deduction
+                if (drug.stockQty < item.qty) {
+                    throw new Error(`Insufficient stock for drug ${drug.name} during dispensing.`);
                 }
 
                 // Deduct stock
@@ -130,21 +155,22 @@ export const updatePrescriptionStatus = async (id: number, status: PrescriptionS
                     item.qty,
                     drug.stockQty,
                     updatedDrug.stockQty,
-                    req.user!.id, // Non-null assertion - already checked at function start
-                    `Prescription #${id} prepared`
+                    req.user!.id,
+                    `Prescription #${id} dispensed`
                 );
 
                 await logActivity(req, 'DRUG_STOCK_DECREMENT', 'DRUG', drug.id, { stockQty: drug.stockQty }, { stockQty: updatedDrug.stockQty });
 
-                // Calculate Fee
+                // Calculate prescription fee
                 prescriptionFee += Number(drug.unitPrice) * item.qty;
             }
 
-            // Create/Update Payment
+            // Create or update payment
             const appointmentId = oldPrescription.medicalRecord.appointmentId;
             const existingPayment = await tx.payment.findUnique({ where: { appointmentId } });
 
             if (existingPayment) {
+                // Update existing payment with prescription fee
                 await tx.payment.update({
                     where: { id: existingPayment.id },
                     data: {
@@ -152,33 +178,41 @@ export const updatePrescriptionStatus = async (id: number, status: PrescriptionS
                         amount: Number(existingPayment.appointmentFee) + prescriptionFee,
                     }
                 });
+                await logActivity(req, 'UPDATE_PRESCRIPTION_FEE', 'PAYMENT', existingPayment.id,
+                    { prescriptionFee: existingPayment.prescriptionFee, amount: existingPayment.amount },
+                    { prescriptionFee, amount: Number(existingPayment.appointmentFee) + prescriptionFee }
+                );
             } else {
-                await tx.payment.create({
+                // Create new payment with PENDING status
+                const appointmentFee = 50000; // Default appointment fee
+                const newPayment = await tx.payment.create({
                     data: {
                         appointmentId,
-                        appointmentFee: 50000, // Default fee
+                        appointmentFee,
                         prescriptionFee,
-                        amount: 50000 + prescriptionFee,
-                        method: 'CASH', // Default, can be updated later
+                        amount: appointmentFee + prescriptionFee,
+                        method: 'CASH', // Default method, can be updated later
                         status: 'PENDING',
                     }
                 });
+
+                // Log payment auto-creation
+                await tx.activityLog.create({
+                    data: {
+                        userId: req.user!.id,
+                        action: 'AUTO_CREATE',
+                        entity: 'PAYMENT',
+                        entityId: newPayment.id,
+                        oldValue: undefined,
+                        newValue: newPayment as any,
+                    },
+                });
             }
+
+            await logActivity(req, 'DISPENSE', 'PRESCRIPTION', id, { status: oldPrescription.status }, { status: 'DISPENSED' });
         }
 
-        // Logic when changing to DISPENSED
-        if (status === PrescriptionStatus.DISPENSED) {
-            const appointmentId = oldPrescription.medicalRecord.appointmentId;
-            const payment = await tx.payment.findUnique({ where: { appointmentId } });
-
-            // Optional: Enforce payment before dispense
-            if (!payment || payment.status !== 'PAID') {
-                // throw new Error('Cannot dispense. Payment not completed.'); 
-                // Uncomment above to enforce strict payment check. 
-                // For now, we'll allow it but maybe log a warning or return a message.
-            }
-        }
-
+        // Update prescription status
         const updatedPrescription = await tx.prescription.update({
             where: { id },
             data: { status },

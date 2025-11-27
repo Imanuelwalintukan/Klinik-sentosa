@@ -9,7 +9,6 @@ import { Layout } from './components/Layout';
 
 // Pages
 import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
 import { Patients } from './pages/Patients';
 import { PatientForm } from './pages/PatientForm';
 import { Appointments } from './pages/Appointments';
@@ -24,6 +23,7 @@ import { UserManagement } from './pages/UserManagement';
 import { DoctorManagement } from './pages/DoctorManagement';
 import { PaymentReports } from './pages/PaymentReports';
 import { SystemLogs } from './pages/SystemLogs';
+import { CustomerDashboard } from './pages/CustomerDashboard';
 import { CustomerQueue } from './pages/CustomerQueue';
 import { CustomerAppointments } from './pages/CustomerAppointments';
 import { CustomerPrescriptions } from './pages/CustomerPrescriptions';
@@ -42,17 +42,25 @@ function AppRoutes() {
     );
   }
 
+  // Redirect based on role if at root
+  const getHomeRoute = () => {
+    switch (user.role) {
+      case 'ADMIN': return '/admin/dashboard';
+      case 'DOCTOR': return '/appointments'; // Doctor home
+      case 'PHARMACIST': return '/pharmacy';
+      case 'STAFF': return '/appointments';
+      case 'CUSTOMER': return '/customer/dashboard';
+      default: return '/';
+    }
+  };
+
   return (
     <Routes>
       <Route path="/login" element={<Navigate to="/" replace />} />
       <Route element={<Layout />}>
         <Route
           path="/"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
+          element={<Navigate to={getHomeRoute()} replace />}
         />
         <Route
           path="/patients"
@@ -171,6 +179,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={['ADMIN']}>
               <SystemLogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['CUSTOMER']}>
+              <CustomerDashboard />
             </ProtectedRoute>
           }
         />

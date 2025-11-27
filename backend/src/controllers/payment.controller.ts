@@ -20,7 +20,16 @@ export const createPayment = async (req: AuthRequest, res: Response) => {
 
 export const getPayments = async (req: Request, res: Response) => {
     try {
-        const payments = await paymentService.getPayments();
+        const { startDate, endDate, status, doctorId, patientId } = req.query;
+
+        const filters: any = {};
+        if (startDate) filters.startDate = startDate as string;
+        if (endDate) filters.endDate = endDate as string;
+        if (status) filters.status = status as string;
+        if (doctorId) filters.doctorId = parseInt(doctorId as string);
+        if (patientId) filters.patientId = parseInt(patientId as string);
+
+        const payments = await paymentService.getPayments(Object.keys(filters).length > 0 ? filters : undefined);
         sendResponse(res, 200, true, payments);
     } catch (error: any) { // Cast error to any
         sendResponse(res, 500, false, null, error.message);

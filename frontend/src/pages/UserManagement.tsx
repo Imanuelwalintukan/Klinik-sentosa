@@ -18,7 +18,7 @@ export const UserManagement: React.FC = () => {
     name: '',
     email: '',
     password: '',
-    role: 'STAFF' as 'ADMIN' | 'DOCTOR' | 'PHARMACIST' | 'STAFF',
+    role: 'STAFF' as 'ADMIN' | 'DOCTOR' | 'PHARMACIST' | 'STAFF' | 'CUSTOMER',
     isActive: true,
   });
 
@@ -222,13 +222,22 @@ export const UserManagement: React.FC = () => {
                 onChange={handleInputChange}
                 required
               />
-              <Input
-                label="Role"
-                name="role"
-                value={formData.role}
-                onChange={handleInputChange}
-                required
-              />
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-text-default">Role</label>
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 bg-bg-dark border border-gray-600 rounded-md text-text-white focus:outline-none focus:ring-2 focus:ring-primary-main"
+                  required
+                >
+                  <option value="STAFF">STAFF</option>
+                  <option value="DOCTOR">DOCTOR</option>
+                  <option value="PHARMACIST">PHARMACIST</option>
+                  <option value="ADMIN">ADMIN</option>
+                  <option value="CUSTOMER">CUSTOMER</option>
+                </select>
+              </div>
               {currentAction === 'edit' && (
                 <div className="flex items-center space-x-2">
                   <input

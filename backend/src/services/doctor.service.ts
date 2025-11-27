@@ -5,33 +5,56 @@ import { logActivity } from './activity-log.service';
 const prisma = new PrismaClient();
 
 export const getAllDoctors = async (filters: { search?: string, page?: number, limit?: number }) => {
-    const { search, page = 1, limit = 10 } = filters;
-    const skip = (page - 1) * limit;
+    const { search, page = 1, limit } = filters;
+
+    // If no limit is provided, return all doctors (for dropdowns, etc.)
+    // Otherwise use pagination
+    const skip = limit ? (page - 1) * limit : undefined;
+    const take = limit || undefined;
 
     const where: any = {
         deletedAt: null, // Always filter out soft-deleted doctors
+        user: {
+            role: 'DOCTOR', // Ensure user has DOCTOR role
+            isActive: true, // Ensure user is active
+        },
     };
 
     if (search) {
-        where.OR = [
+        // When searching, we need to use AND to combine with base filters
+        where.AND = [
             {
                 user: {
-                    name: { contains: search, mode: 'insensitive' },
+                    role: 'DOCTOR',
+                    isActive: true,
                 },
             },
             {
-                user: {
-                    email: { contains: search, mode: 'insensitive' },
-                },
+                OR: [
+                    {
+                        user: {
+                            name: { contains: search, mode: 'insensitive' },
+                        },
+                    },
+                    {
+                        user: {
+                            email: { contains: search, mode: 'insensitive' },
+                        },
+                    },
+                    {
+                        specialization: { contains: search, mode: 'insensitive' },
+                    },
+                ],
             },
-            { specialization: { contains: search, mode: 'insensitive' } },
         ];
+        // Remove the top-level user filter when using AND
+        delete where.user;
     }
 
     const doctors = await prisma.doctor.findMany({
         where,
         skip,
-        take: limit,
+        take,
         include: {
             user: true,
         },
@@ -44,7 +67,7 @@ export const getAllDoctors = async (filters: { search?: string, page?: number, l
 
     const total = await prisma.doctor.count({ where });
 
-    return { doctors, total, page, limit };
+    return { doctors, total, page, limit: limit || total };
 };
 
 export const getDoctorById = async (id: number) => {
@@ -54,6 +77,12 @@ export const getDoctorById = async (id: number) => {
             user: true,
             appointments: true,
         },
+    });
+};
+
+export const getDoctorByUserId = async (userId: number) => {
+    return await prisma.doctor.findUnique({
+        where: { userId },
     });
 };
 

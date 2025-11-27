@@ -33,6 +33,21 @@ export const getDoctorById = async (req: Request, res: Response) => {
     }
 };
 
+export const getDoctorProfile = async (req: AuthRequest, res: Response) => {
+    try {
+        if (!req.user) {
+            return sendResponse(res, 401, false, null, 'Unauthorized');
+        }
+        const doctor = await doctorService.getDoctorByUserId(req.user.id);
+        if (!doctor) {
+            return sendResponse(res, 404, false, null, 'Doctor profile not found');
+        }
+        sendResponse(res, 200, true, doctor);
+    } catch (error: any) {
+        sendResponse(res, 500, false, null, error.message);
+    }
+};
+
 export const createDoctor = async (req: AuthRequest, res: Response) => {
     try {
         const newDoctor = await doctorService.createDoctor(req.body, req);

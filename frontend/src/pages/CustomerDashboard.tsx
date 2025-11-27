@@ -3,7 +3,7 @@ import { Card } from '../components/ui/Card';
 import { Calendar, Clock, FileText, CreditCard, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCustomerQueue, getCustomerAppointments, getCustomerPrescriptions, getCustomerPayments } from '../services/api';
-import { CustomerQueue as CustomerQueueType, Appointment, Prescription, Payment } from '../types';
+import type { CustomerQueue as CustomerQueueType, Appointment, Prescription, Payment } from '../types';
 
 export const CustomerDashboard: React.FC = () => {
     const [queueData, setQueueData] = useState<CustomerQueueType | null>(null);
@@ -79,7 +79,7 @@ export const CustomerDashboard: React.FC = () => {
                         </div>
                     </div>
                     <div className="mt-6 pt-6 border-t border-white/10">
-                        <p className="text-text-default"><span className="font-semibold">Doctor:</span> {queueData.appointment.doctor?.user.name}</p>
+                        <p className="text-text-default"><span className="font-semibold">Doctor:</span> {queueData.appointment.doctor?.user?.name}</p>
                         <p className="text-text-muted"><span className="font-semibold">Scheduled:</span> {new Date(queueData.appointment.scheduledAt).toLocaleString()}</p>
                     </div>
                 </Card>
@@ -141,7 +141,7 @@ export const CustomerDashboard: React.FC = () => {
                         {appointments.slice(0, 5).map((apt) => (
                             <div key={apt.id} className="flex justify-between items-center p-4 bg-bg-dark/30 rounded-lg hover:bg-bg-dark/50 transition-colors">
                                 <div>
-                                    <p className="text-text-white font-medium">{apt.doctor?.user.name || 'Doctor'}</p>
+                                    <p className="text-text-white font-medium">{apt.doctor?.user?.name || 'Doctor'}</p>
                                     <p className="text-text-muted text-sm">{new Date(apt.scheduledAt).toLocaleDateString('en-US', {
                                         weekday: 'short',
                                         year: 'numeric',

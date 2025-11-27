@@ -8,7 +8,7 @@ export const createAppointmentSchema = z.object({
 });
 
 export const updateAppointmentSchema = z.object({
-    status: z.enum(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED']).optional(),
+    status: z.enum(['PENDING', 'CONFIRMED', 'PATIENT_ARRIVED', 'COMPLETED', 'CANCELLED']).optional(),
     scheduledAt: z.string().transform((str) => new Date(str)).optional(),
     complaint: z.string().optional(),
 });

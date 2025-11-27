@@ -15,8 +15,8 @@ import toast from 'react-hot-toast';
 import type { Patient, Doctor } from '../types/index';
 
 const appointmentSchema = z.object({
-    patientId: z.number().min(1, 'Patient is required'),
-    doctorId: z.number().min(1, 'Doctor is required'),
+    patientId: z.coerce.number().min(1, 'Patient is required'),
+    doctorId: z.coerce.number().min(1, 'Doctor is required'),
     scheduledAt: z.string().min(1, 'Date and time is required'),
     complaint: z.string().optional(),
 });
@@ -34,7 +34,7 @@ export const AppointmentForm: React.FC = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<AppointmentFormData>({
-        resolver: zodResolver(appointmentSchema),
+        resolver: zodResolver(appointmentSchema) as any,
     });
 
     useEffect(() => {
@@ -45,10 +45,13 @@ export const AppointmentForm: React.FC = () => {
         try {
             const [patientsRes, doctorsRes] = await Promise.all([
                 api.get('/patients'),
-                api.get('/doctors'),
+                api.get('/doctors', { params: { limit: 1000 } }), // Fetch all doctors without pagination limit
             ]);
             setPatients(patientsRes.data.data || []);
-            setDoctors(doctorsRes.data.data || []);
+            // Fix: Handle both array and paginated object response
+            const doctorsData = doctorsRes.data.data;
+            const doctorsList = Array.isArray(doctorsData) ? doctorsData : (doctorsData?.doctors || []);
+            setDoctors(doctorsList);
         } catch (error) {
             toast.error('Failed to load data');
         }
@@ -75,7 +78,7 @@ export const AppointmentForm: React.FC = () => {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <Select
                         label="Patient"
-                        {...register('patientId', { valueAsNumber: true })}
+                        {...register('patientId')}
                         error={errors.patientId?.message}
                         options={[
                             { value: '', label: 'Select patient' },
@@ -85,11 +88,11 @@ export const AppointmentForm: React.FC = () => {
 
                     <Select
                         label="Doctor"
-                        {...register('doctorId', { valueAsNumber: true })}
+                        {...register('doctorId')}
                         error={errors.doctorId?.message}
                         options={[
                             { value: '', label: 'Select doctor' },
-                            ...doctors.map((d) => ({ value: d.id, label: d.user?.name || 'Unknown' })),
+                            ...doctors.map((d) => ({ value: d.id, label: d.user?.name || `Doctor #${d.id}` })),
                         ]}
                     />
 
@@ -124,4 +127,3 @@ export const AppointmentForm: React.FC = () => {
         </div>
     );
 };
-

@@ -59,13 +59,14 @@ export interface Appointment {
     patientId: number;
     doctorId: number;
     scheduledAt: string;
-    status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+    status: 'PENDING' | 'CONFIRMED' | 'PATIENT_ARRIVED' | 'COMPLETED' | 'CANCELLED';
     queueNumber: number;
     complaint?: string;
     createdById: number;
     patient?: Patient;
     doctor?: Doctor;
     createdBy?: User;
+    medicalRecord?: MedicalRecord;
     createdAt: string;
     updatedAt: string;
 }
@@ -80,6 +81,7 @@ export interface MedicalRecord {
     appointment?: Appointment;
     patient?: Patient;
     doctor?: Doctor;
+    prescription?: Prescription;
     createdAt: string;
 }
 
@@ -125,7 +127,16 @@ export interface Payment {
     prescriptionFee?: number;
     method: 'CASH' | 'CARD' | 'QRIS';
     status: 'PENDING' | 'PAID' | 'CANCELLED';
-    appointment?: Appointment;
+    appointment?: Appointment & {
+        patient?: Patient;
+        doctor?: Doctor & { user?: User };
+        medicalRecord?: MedicalRecord & {
+            diagnosis?: string;
+            prescription?: Prescription & {
+                items?: (PrescriptionItem & { drug?: Drug })[];
+            };
+        };
+    };
     createdAt: string;
     updatedAt?: string;
 }

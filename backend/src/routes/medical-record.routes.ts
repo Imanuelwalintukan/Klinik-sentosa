@@ -10,7 +10,9 @@ const router = Router();
 router.use(authenticate);
 
 router.post('/', authorize([Role.DOCTOR]), validate(createMedicalRecordSchema), medicalRecordController.createMedicalRecord);
+router.get('/:id', medicalRecordController.getMedicalRecordById);
 router.get('/appointment/:appointmentId', medicalRecordController.getMedicalRecord);
+router.get('/patient/:patientId/history', medicalRecordController.getPatientHistory);
 router.put('/appointment/:appointmentId', authorize([Role.ADMIN, Role.DOCTOR]), validate(updateMedicalRecordSchema), medicalRecordController.updateMedicalRecord);
 
 export default router;

@@ -59,7 +59,7 @@ export const createPayment = async (data: any, req: AuthRequest) => {
             appointmentId: targetAppointmentId,
             amount,
             method,
-            status: PaymentStatus.PAID,
+            status: PaymentStatus.PENDING, // Changed from PAID to PENDING
         },
     });
 
@@ -68,9 +68,87 @@ export const createPayment = async (data: any, req: AuthRequest) => {
     return newPayment;
 };
 
-// GET ALL PAYMENTS with deep nested relations
-export const getPayments = async () => {
+// CREATE PAYMENT FOR PRESCRIPTION (auto-generated during dispensing)
+export const createPaymentForPrescription = async (
+    appointmentId: number,
+    appointmentFee: number,
+    prescriptionFee: number,
+    userId: number
+) => {
+    const totalAmount = appointmentFee + prescriptionFee;
+
+    const newPayment = await prisma.payment.create({
+        data: {
+            appointmentId,
+            appointmentFee,
+            prescriptionFee,
+            amount: totalAmount,
+            method: 'CASH', // Default method, can be updated when processing payment
+            status: PaymentStatus.PENDING,
+        },
+    });
+
+    // Log activity for auto-created payment
+    await prisma.activityLog.create({
+        data: {
+            userId,
+            action: 'AUTO_CREATE',
+            entity: 'PAYMENT',
+            entityId: newPayment.id,
+            oldValue: undefined,
+            newValue: newPayment as any,
+        },
+    });
+
+    return newPayment;
+};
+
+// GET ALL PAYMENTS with deep nested relations and optional filters
+export const getPayments = async (filters?: {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    doctorId?: number;
+    patientId?: number;
+}) => {
+    const whereClause: any = {};
+
+    // Date range filter
+    if (filters?.startDate || filters?.endDate) {
+        whereClause.createdAt = {};
+        if (filters.startDate) {
+            whereClause.createdAt.gte = new Date(filters.startDate);
+        }
+        if (filters.endDate) {
+            const endDate = new Date(filters.endDate);
+            endDate.setHours(23, 59, 59, 999); // Include entire end date
+            whereClause.createdAt.lte = endDate;
+        }
+    }
+
+    // Status filter
+    if (filters?.status) {
+        whereClause.status = filters.status;
+    }
+
+    // Doctor filter
+    if (filters?.doctorId) {
+        whereClause.appointment = {
+            ...whereClause.appointment,
+            doctorId: filters.doctorId,
+        };
+    }
+
+    // Patient filter
+    if (filters?.patientId) {
+        whereClause.appointment = {
+            ...whereClause.appointment,
+            patientId: filters.patientId,
+        };
+    }
+
     return prisma.payment.findMany({
+        where: whereClause,
         include: {
             appointment: {
                 include: {

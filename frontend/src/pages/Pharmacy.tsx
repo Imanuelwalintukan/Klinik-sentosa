@@ -39,17 +39,20 @@ export const Pharmacy: React.FC = () => {
         if (!selectedPrescription) return;
 
         try {
-            await api.post(`/prescriptions/${selectedPrescription.id}/dispense`);
-            toast.success('Prescription dispensed successfully');
+            // Determine next status based on current status
+            const nextStatus = selectedPrescription.status === 'PENDING' ? 'PREPARED' : 'DISPENSED';
+
+            await api.put(`/prescriptions/${selectedPrescription.id}/status`, { status: nextStatus });
+            toast.success(`Prescription ${nextStatus.toLowerCase()} successfully`);
             setShowModal(false);
             loadPrescriptions();
         } catch (error: any) {
-            toast.error(error.response?.data?.error || 'Failed to dispense prescription');
+            toast.error(error.response?.data?.error || 'Failed to update prescription');
         }
     };
 
     const columns = [
-        { header: 'Patient', accessor: (p: Prescription) => p.medicalRecord?.patient?.name || '-' },
+        { header: 'Patient', accessor: (p: Prescription) => p.medicalRecord?.appointment?.patient?.name || '-' },
         { header: 'Doctor', accessor: (p: Prescription) => p.doctor?.user?.name || '-' },
         { header: 'Date', accessor: (p: Prescription) => new Date(p.createdAt).toLocaleDateString() },
         {
@@ -57,10 +60,10 @@ export const Pharmacy: React.FC = () => {
             accessor: (p: Prescription) => (
                 <span
                     className={`px-2 py-1 text-xs rounded-full ${p.status === 'DISPENSED'
-                            ? 'bg-green-100 text-green-800'
-                            : p.status === 'PREPARED'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-green-100 text-green-800'
+                        : p.status === 'PREPARED'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-yellow-100 text-yellow-800'
                         }`}
                 >
                     {p.status}
@@ -103,7 +106,7 @@ export const Pharmacy: React.FC = () => {
                     <div className="space-y-4">
                         <div>
                             <p className="text-sm text-gray-600">Patient</p>
-                            <p className="font-medium">{selectedPrescription.medicalRecord?.patient?.name}</p>
+                            <p className="font-medium">{selectedPrescription.medicalRecord?.appointment?.patient?.name}</p>
                         </div>
                         <div>
                             <p className="text-sm text-gray-600">Diagnosis</p>
@@ -126,7 +129,7 @@ export const Pharmacy: React.FC = () => {
                                 Cancel
                             </Button>
                             <Button onClick={handleDispense}>
-                                Confirm Dispense
+                                {selectedPrescription.status === 'PENDING' ? 'Confirm Prepare' : 'Confirm Dispense'}
                             </Button>
                         </div>
                     </div>
@@ -135,4 +138,3 @@ export const Pharmacy: React.FC = () => {
         </div>
     );
 };
-

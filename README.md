@@ -1,225 +1,207 @@
-# Klinik Sentosa
+# 🏥 Klinik Sentosa - Clinic Management System
 
-Full-stack clinic management system built with Node.js, Express, TypeScript, Prisma, PostgreSQL, React, and Tailwind CSS.
+## 1. 🔹 Project Overview
 
-## 🏥 Features
+**Klinik Sentosa** is a robust, full-stack clinic management system designed to digitize and streamline the entire patient journey—from registration to diagnosis, medication dispensing, and billing. It serves as a centralized platform for all clinic staff and provides a dedicated portal for patients.
 
-- **Patient Management**: Register, search, edit patient records
-- **Appointment Scheduling**: Book appointments with doctors, manage daily queue
-- **Doctor Examination**: Create medical records with diagnosis and notes
-- **Prescription Management**: Create prescriptions with automatic stock management (transactional)
-- **Pharmacy Workflow**: Prepare and dispense medications
-- **Payment Processing**: Handle payments with multiple methods (Cash, Card, QRIS)
-- **Drug Inventory**: Manage drug stock with low-stock warnings
-- **Role-based Access**: Admin, Doctor, Pharmacist, Staff roles with specific permissions
+### 👥 User Roles
+*   **Admin:** Complete system oversight, user/doctor management, and financial reporting.
+*   **Staff (Receptionist):** Front-desk operations, patient registration, appointment scheduling, and payment processing.
+*   **Doctor:** Clinical operations, patient examination, digital diagnosis, and prescribing.
+*   **Pharmacist:** Medication management, prescription preparation, dispensing, and stock control.
+*   **Customer (Patient):** Personal portal to track queue status, view medical history, and access digital receipts.
 
-## 🛠️ Tech Stack
+---
 
-**Backend:**
-- Node.js 18+ with Express
-- TypeScript
-- Prisma ORM
-- PostgreSQL
-- JWT Authentication
-- Zod Validation
-- Jest (Unit Tests)
+## 2. 🔄 Full Program Flow
 
-**Frontend:**
-- React 19 with Vite
-- TypeScript
-- Tailwind CSS
-- React Router
-- React Hook Form
-- Playwright (E2E Tests)
+The system is designed around a seamless, linear workflow that ensures data integrity and operational efficiency.
 
-## 📋 Prerequisites
+### 📝 Step-by-Step Workflow Story
 
-- Node.js 18 or higher
-- PostgreSQL 12 or higher
-- npm or yarn
+1.  **Appointment Booking (Staff):**
+    *   A patient arrives or calls. The **Staff** logs in and navigates to *Appointments*.
+    *   They select the patient and doctor, creating a new appointment.
+    *   **System:** Generates a Queue Number (e.g., #005) and sets status to `PENDING`.
 
-## 🚀 Setup Instructions
+2.  **Patient Arrival (Staff):**
+    *   When the patient arrives at the clinic, **Staff** marks the appointment as `PATIENT_ARRIVED`.
+    *   **System:** Updates the live queue; the patient can see their status on the *Customer Portal*.
 
-### 1. Clone the Repository
+3.  **Examination & Diagnosis (Doctor):**
+    *   The **Doctor** sees the patient in their queue and clicks *Examine*.
+    *   They record the **Diagnosis** and medical notes.
+    *   **System:** Creates a `MedicalRecord` and updates appointment status to `COMPLETED`.
 
-```bash
-git clone <repository-url>
-cd klinik-sentosa
+4.  **Prescribing Medication (Doctor):**
+    *   From the examination screen, the **Doctor** creates a **Prescription**.
+    *   They add drugs (e.g., "Amoxicillin", "Paracetamol") with specific dosages.
+    *   **System:** Sends the prescription to the Pharmacy Queue with status `PENDING`. *Note: Stock is not deducted yet.*
+
+5.  **Preparation (Pharmacist):**
+    *   The **Pharmacist** sees the new order in the *Pharmacy Queue*.
+    *   They click *Prepare* to validate stock availability.
+    *   **System:** Checks inventory. If sufficient, updates status to `PREPARED`.
+
+6.  **Dispensing (Pharmacist):**
+    *   Once physically ready, the **Pharmacist** clicks *Dispense*.
+    *   **System:**
+        *   **Deducts Stock:** Inventory counts are reduced in real-time.
+        *   **Creates Payment:** A bill is auto-generated containing the Appointment Fee + Prescription Cost.
+        *   **Updates Status:** Prescription becomes `DISPENSED`.
+
+7.  **Payment Processing (Staff):**
+    *   The **Staff** sees the new bill in the *Payments* section.
+    *   They process the payment (Cash/Card/QRIS) and mark it as `PAID`.
+    *   **System:** Moves the transaction to history and generates a receipt.
+
+8.  **Customer Access (Customer):**
+    *   The **Patient** logs into the *Customer Portal*.
+    *   They can view their past diagnoses, prescription details, and download the official receipt.
+
+### mermaid Flow Diagram
+
+```mermaid
+graph TD
+    subgraph Reception
+    A[Staff Creates Appointment] -->|Status: PENDING| B[Patient Arrives]
+    B -->|Status: PATIENT_ARRIVED| C[Doctor Queue]
+    end
+
+    subgraph Clinical
+    C -->|Doctor Examines| D[Create Medical Record]
+    D -->|Status: COMPLETED| E[Create Prescription]
+    end
+
+    subgraph Pharmacy
+    E -->|Status: PENDING| F[Pharmacist Prepares]
+    F -->|Status: PREPARED| G[Pharmacist Dispenses]
+    G -->|Stock Deducted| H[Auto-Create Payment]
+    end
+
+    subgraph Finance
+    H -->|Status: PENDING| I[Staff Processes Payment]
+    I -->|Status: PAID| J[Transaction Complete]
+    end
+
+    subgraph Customer_Portal
+    K[View Queue]
+    L[View History]
+    M[Download Receipt]
+    end
 ```
 
-### 2. Backend Setup
+---
 
-```bash
-cd backend
-npm install
-```
+## 3. 🔑 Role-Based Features
 
-Create a `.env` file:
+| Role | Permissions & Features |
+| :--- | :--- |
+| **ADMIN** | • **User Management:** Create/Edit users, assign roles.<br>• **Doctor Management:** Manage profiles & schedules.<br>• **Reports:** View financial analytics & logs.<br>• **Full Access:** Can access all modules except personal medical entry. |
+| **STAFF** | • **Registration:** Add new patients.<br>• **Appointments:** Schedule & manage queue.<br>• **Payments:** Process bills & view history.<br>• **Dashboard:** View clinic overview. |
+| **DOCTOR** | • **Examination:** Access assigned patient queue.<br>• **Medical Records:** Write diagnoses & notes.<br>• **Prescriptions:** Issue medications.<br>• **History:** View patient medical background. |
+| **PHARMACIST**| • **Pharmacy Queue:** Manage prescription workflow.<br>• **Inventory:** Add drugs, update stock, monitor expiry.<br>• **Dispense:** Validate stock & trigger billing. |
+| **CUSTOMER** | • **Dashboard:** View live queue status.<br>• **Medical History:** View past visits (read-only).<br>• **Prescriptions:** See medication instructions.<br>• **Payments:** View bills & download receipts. |
 
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/klinik_sentosa?schema=public"
-PORT=3000
-JWT_SECRET="your-secret-key-here"
-```
+---
 
-Run database migrations:
+## 4. 🔗 Module-to-Module Interaction
 
-```bash
-npx prisma migrate dev --name init
-```
+*   **Appointment ➔ Medical Record:** An appointment must exist and be in progress for a Medical Record to be created. The record links back to the appointment.
+*   **Medical Record ➔ Prescription:** A prescription is strictly tied to a specific medical record (diagnosis).
+*   **Prescription ➔ Inventory:** Dispensing a prescription directly mutates the `Drug` table (decrements `stockQty`).
+*   **Prescription ➔ Payment:** The act of dispensing triggers the creation of a `Payment` record. The system calculates the total cost (Consultation Fee + Σ(Drug Price × Qty)).
+*   **Payment ➔ Reports:** Completed payments are aggregated into daily/monthly financial reports accessible by Admins.
 
-Seed the database:
+---
 
-```bash
-npx prisma db seed
-```
+## 5. 🚀 Installation & Setup
 
-Start the backend server:
+### Backend Setup
+1.  **Navigate:** `cd backend`
+2.  **Install:** `npm install`
+3.  **Env:** Create `.env` with:
+    ```env
+    DATABASE_URL="postgresql://user:password@localhost:5432/klinik_sentosa?schema=public"
+    JWT_SECRET="your_secret_key"
+    PORT=3000
+    ```
+4.  **Database:**
+    ```bash
+    npx prisma migrate dev
+    npx prisma db seed  # CRITICAL: Seeds default users
+    ```
+5.  **Run:** `npm run dev`
 
-```bash
-npm run dev
-```
+### Frontend Setup
+1.  **Navigate:** `cd frontend`
+2.  **Install:** `npm install`
+3.  **Run:** `npm run dev`
 
-The backend will run on `http://localhost:3000`
+---
 
-### 3. Frontend Setup
+## 6. 🔐 How to Login (Seeded Users)
 
-```bash
-cd frontend
-npm install
-```
-
-Start the frontend dev server:
-
-```bash
-npm run dev
-```
-
-The frontend will run on `http://localhost:5173`
-
-## 👥 Default Users
-
-After seeding, you can login with:
+The system comes pre-seeded with the following accounts for testing. The password for **ALL** accounts is `password123`.
 
 | Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@klinik.com | password123 |
-| Doctor | strange@klinik.com | password123 |
-| Pharmacist | pharmacist@klinik.com | password123 |
-| Staff | alice@klinik.com | password123 |
+| :--- | :--- | :--- |
+| **Admin** | `admin@klinik.com` | `password123` |
+| **Staff** | `alice@klinik.com` | `password123` |
+| **Doctor** | `strange@klinik.com` | `password123` |
+| **Doctor** | `house@klinik.com` | `password123` |
+| **Pharmacist**| `pharmacist@klinik.com`| `password123` |
+| **Customer** | `customer1@example.com`| `password123` |
 
-## 🧪 Testing
+---
 
-### Backend Unit Tests
+## 7. 🗄️ Database Schema (ERD)
 
-```bash
-cd backend
-npm test
+Based on the Prisma schema, here is the entity relationship structure:
+
+```mermaid
+erDiagram
+    User ||--o| Doctor : "is a"
+    User ||--o| Patient : "linked to (Customer)"
+    User ||--o{ Appointment : "created by"
+    
+    Doctor ||--o{ Appointment : "assigned to"
+    Doctor ||--o{ Prescription : "issues"
+    
+    Patient ||--o{ Appointment : "has"
+    
+    Appointment ||--|| MedicalRecord : "results in"
+    Appointment ||--|| Payment : "billed as"
+    
+    MedicalRecord ||--|| Prescription : "may have"
+    
+    Prescription ||--|{ PrescriptionItem : "contains"
+    PrescriptionItem }|--|| Drug : "references"
+    
+    Drug ||--o{ StockAuditLog : "tracked by"
 ```
 
-### Frontend E2E Tests
+---
 
-```bash
-cd frontend
-npx playwright test
-```
+## 8. 📍 API & Page Index
 
-### Rubric Validation
+### Frontend Navigation Paths
+*   `/login` - Authentication
+*   `/admin/dashboard` - Admin Overview
+*   `/admin/users` - User Management
+*   `/patients` - Patient List & Registration
+*   `/appointments` - Appointment Scheduling & Queue
+*   `/examination/:id` - Doctor Examination Interface
+*   `/pharmacy` - Prescription Processing
+*   `/inventory` - Drug Stock Management
+*   `/payments` - Billing & Transaction History
+*   `/customer/dashboard` - Patient Portal Home
 
-Run the automated rubric checker:
-
-```bash
-cd tools
-npm install
-npm run check
-```
-
-This will generate a report at `docs/rubric-report.md` showing which rubric criteria are met.
-
-## 📁 Project Structure
-
-```
-klinik-sentosa/
-├── backend/
-│   ├── src/
-│   │   ├── controllers/     # Request handlers
-│   │   ├── services/        # Business logic
-│   │   ├── routes/          # API routes
-│   │   ├── middleware/      # Auth, logging, errors
-│   │   ├── validation/      # Zod schemas
-│   │   └── tests/           # Jest unit tests
-│   ├── prisma/
-│   │   ├── schema.prisma    # Database schema
-│   │   ├── seed.ts          # Sample data
-│   │   └── migrations/      # Database migrations
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── pages/           # React pages
-│   │   ├── components/      # Reusable components
-│   │   ├── context/         # Auth context
-│   │   └── services/        # API client
-│   ├── tests-e2e/           # Playwright tests
-│   └── package.json
-├── tools/
-│   └── rubric-checker.js    # Validation script
-└── docs/
-    ├── mapping.md           # Use case mapping
-    └── rubric-report.md     # Validation report
-```
-
-## 🔑 Key Features Implementation
-
-### Transactional Prescription Creation
-
-The prescription creation process uses Prisma transactions to ensure data consistency:
-
-1. Creates prescription record
-2. Creates prescription items
-3. Decrements drug stock atomically
-4. Rolls back entire transaction if any step fails (e.g., insufficient stock)
-
-See: `backend/src/services/prescription.service.ts`
-
-### Role-based Access Control
-
-All protected routes use JWT authentication and role-based middleware:
-
-```typescript
-router.post('/', authenticate, authorize([Role.ADMIN, Role.STAFF]), createPatient);
-```
-
-### API Response Format
-
-All API responses follow a consistent format:
-
-```json
-{
-  "success": true,
-  "data": { ... },
-  "error": null
-}
-```
-
-## 📚 Documentation
-
-- [Use Case Mapping](docs/mapping.md) - Maps use cases to implementation
-- [Rubric Report](docs/rubric-report.md) - Validation against rubric criteria
-
-## 🐛 Troubleshooting
-
-**Database connection error:**
-- Ensure PostgreSQL is running
-- Check `DATABASE_URL` in `.env`
-- Verify database exists: `createdb klinik_sentosa`
-
-**Port already in use:**
-- Backend: Change `PORT` in `.env`
-- Frontend: Vite will auto-increment port
-
-**Prisma client errors:**
-- Run `npx prisma generate` in backend directory
-
-## 📝 License
-
-This project is for educational purposes.
+### Key Backend API Routes
+*   **Auth:** `POST /api/auth/login`
+*   **Users:** `GET /api/users`, `POST /api/users`
+*   **Appointments:** `GET /api/appointments`, `POST /api/appointments`
+*   **Medical Records:** `POST /api/medical-records`
+*   **Prescriptions:** `POST /api/prescriptions`, `PUT /api/prescriptions/:id/status`
+*   **Drugs:** `GET /api/drugs`, `POST /api/drugs`
+*   **Payments:** `GET /api/payments`, `PUT /api/payments/appointment/:id/status`
